@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Visual Studio's auto-generated files
+*.opensdf
+*.sdf
+.vscode/
