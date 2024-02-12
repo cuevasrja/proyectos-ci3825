@@ -11,6 +11,8 @@ Board* newBoard();
 
 void freeBoard(Board* board);
 
+char* get_key(Board* board, int x, int y);
+
 void printBoard(Board* board);
 
 #endif

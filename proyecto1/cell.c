@@ -1,9 +1,12 @@
 #include <stdlib.h>
+# include <stdio.h>
 #include "cell.h"
 
-// Constructor
-Cell* newCell() {
+
+// Constructor. Como parametro recibe un puntero a una pieza que por defecto es NULL
+Cell* newCell(Piece* piece) {
     Cell* cell = (Cell*)malloc(sizeof(Cell));
+    cell->piece = piece;
     return cell;
 }
 

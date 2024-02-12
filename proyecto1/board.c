@@ -1,5 +1,6 @@
 # include <stdio.h>
-#include <stdlib.h>
+# include <stdlib.h>
+# include <string.h>
 # include "board.h"
 
 // Constructor
@@ -8,12 +9,12 @@ Board* newBoard() {
     int i;
     for (i = 0; i < 8; i++) {
         if (i == 4){
-            setPiece(board->cells[0][i], newPieza("Black", "King", 10));
-            setPiece(board->cells[7][i], newPieza("White", "King", 10));
+            board->cells[0][i] = newCell(newPiece("Black", "King", 10));
+            board->cells[7][i] = newCell(newPiece("White", "King", 10));
         }
         else {
-            setPiece(board->cells[0][i], newPieza("Black", "Horse", 3));
-            setPiece(board->cells[7][i], newPieza("White", "Horse", 3));
+            board->cells[0][i] = newCell(newPiece("Black", "Horse", 3));
+            board->cells[7][i] = newCell(newPiece("White", "Horse", 3));
         }
         if(board == NULL){
             printf("Error al crear el tablero");
@@ -23,7 +24,7 @@ Board* newBoard() {
     for (i = 1; i < 7; i++){
         int j;
         for (j = 0; j < 8; j++){
-            setPiece(board->cells[i][j], NULL);
+            board->cells[i][j] = NULL;
         }
     }
 
@@ -35,12 +36,29 @@ void freeBoard(Board* board) {
     free(board);
 }
 
+char* get_key(Board* board, int x, int y) {
+    if (board->cells[x][y] != NULL) {
+        // Unimos el equipo y el tipo de pieza en formato "team_type"
+        char* key = (char*)malloc(20 * sizeof(char));
+        strcpy(key, getTeam(board->cells[x][y]->piece));
+        strcat(key, "_");
+        strcat(key, getType(board->cells[x][y]->piece));
+        return key;
+    }
+    return NULL;
+}
+
 void printBoard(Board* board) {
     int i;
     for (i = 0; i < 8; i++) {
         int j;
         for (j = 0; j < 8; j++) {
-            printf("a ");
+            if (board->cells[i][j] != NULL) {
+                printf("%c ", get_value(get_key(board, i, j)));
+            }
+            else {
+                printf("- ");
+            }
         }
         printf("\n");
     }

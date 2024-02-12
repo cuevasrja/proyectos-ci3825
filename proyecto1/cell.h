@@ -7,7 +7,9 @@ typedef struct cell{
     Piece* piece;
 } Cell;
 
-Cell* newCell();
+Cell* newCell(Piece* piece);
+
+void freeCell(Cell* cell);
 
 void setPiece(Cell* cell, Piece* piece);
 

@@ -1,5 +1,24 @@
-#include <stdlib.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
 # include "piece.h"
+
+dict chessPieces[] = {
+    {"White_Horse", 'N'},
+    {"White_King", 'K'},
+    {"Black_Horse", 'z'},
+    {"Black_King", 'x'}
+};
+
+char get_value(char* key){
+    int i;
+    for(i = 0; i < sizeof(chessPieces)/sizeof(dict); i++) {
+        if(strcmp(chessPieces[i].key, key) == 0){
+            return chessPieces[i].value;
+        }
+    }
+    return ' ';
+}
 
 // Constructor
 Piece* newPiece(char* team, char* type, int value) {
