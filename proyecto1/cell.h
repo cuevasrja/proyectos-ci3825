@@ -15,4 +15,6 @@ void setPiece(Cell* cell, Piece* piece);
 
 char getValue(Cell* cell);
 
+Piece* getPieceIn(Cell* cell, int x, int y);
+
 #endif

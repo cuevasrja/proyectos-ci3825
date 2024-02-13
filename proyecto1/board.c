@@ -9,11 +9,14 @@
 # define BLACK_HORSE 2
 # define BLACK_KING 3
 
+# define N 8
+# define M 5
+
 // Constructor
 Board* newBoard() {
     Board* board = (Board*)malloc(sizeof(Board));
     int i;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < N; i++) {
         if (i == 4){
             board->cells[0][i] = newCell(newPiece(BLACK_KING, 10));
             board->cells[7][i] = newCell(newPiece(WHITE_KING, 10));
@@ -29,7 +32,7 @@ Board* newBoard() {
 
     for (i = 1; i < 7; i++){
         int j;
-        for (j = 0; j < 8; j++){
+        for (j = 0; j < N; j++){
             board->cells[i][j] = NULL;
         }
     }
@@ -42,15 +45,35 @@ void freeBoard(Board* board) {
     free(board);
 }
 
-void printBoard(Board* board) {
-    int i;
-    for (i = 0; i < 8; i++) {
-        int j;
-        for (j = 0; j < 8; j++) {
-            printf("%c ", getValue(board->cells[i][j]));
-        }
-        printf("\n");
-    }
-    
+void printBorder(int x, int y, int i){
+    if (y == 0) printf("-");
+    else if(x == 0 || (i == N - 1 && x == M - 1)) printf("|");
+    else printf(" ");
+}
 
+void printRow(Cell* row[], int h){
+    int i;
+    for (i = 0; i < N; i++){
+        int j;
+        for (j = 0; j < M; j++){
+            Piece* piece = getPieceIn(row[i], j, h);
+            if (piece == NULL) printBorder(j, h, i);
+            else printf("%c", get_value(piece));
+        }
+    }
+    printf("\n");
+}
+
+void printBoard(Board* board){
+    int i;
+    for (i = 0; i < N; i++) {
+        int j;
+        for (j = 0; j < M; j++) {
+            printRow(board->cells[i], j);
+        }
+    }
+    for (i = 0; i < N*M; i++){
+        printf("-");
+    }
+    printf("\n");
 }
