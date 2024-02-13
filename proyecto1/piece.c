@@ -3,29 +3,25 @@
 # include <string.h>
 # include "piece.h"
 
-dict chessPieces[] = {
-    {"White_Horse", 'N'},
-    {"White_King", 'K'},
-    {"Black_Horse", 'z'},
-    {"Black_King", 'x'}
+char chessPieces[] = {
+    'N',
+    'K',
+    'z',
+    'x'
 };
 
-char get_value(char* key){
-    int i;
-    for(i = 0; i < sizeof(chessPieces)/sizeof(dict); i++) {
-        if(strcmp(chessPieces[i].key, key) == 0){
-            return chessPieces[i].value;
-        }
+char get_value(Piece* piece){
+    if(piece == NULL || piece->type < 0){
+        return '-';
     }
-    return ' ';
+    return chessPieces[piece->type];
 }
 
 // Constructor
-Piece* newPiece(char* team, char* type, int value) {
+Piece* newPiece(int type, int points) {
     Piece* piece = (Piece*)malloc(sizeof(Piece));
-    piece->team = team;
     piece->type = type;
-    piece->value = value;
+    piece->points = points;
     piece->x = 2;
     piece->y = 2;
     piece->inMovement = 0;
@@ -38,16 +34,12 @@ void freePiece(Piece* piece) {
 }
 
 // Getters
-char* getType(Piece* piece) {
+int getType(Piece* piece) {
     return piece->type;
 }
 
-char* getTeam(Piece* piece) {
-    return piece->team;
-}
-
-int getValue(Piece* piece) {
-    return piece->value;
+int getPoints(Piece* piece) {
+    return piece->points;
 }
 
 int getX(Piece* piece) {

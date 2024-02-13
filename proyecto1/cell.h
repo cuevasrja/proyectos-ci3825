@@ -13,4 +13,6 @@ void freeCell(Cell* cell);
 
 void setPiece(Cell* cell, Piece* piece);
 
+char getValue(Cell* cell);
+
 #endif

@@ -3,18 +3,24 @@
 # include <string.h>
 # include "board.h"
 
+# define EMPTY -1
+# define WHITE_HORSE 0
+# define WHITE_KING 1
+# define BLACK_HORSE 2
+# define BLACK_KING 3
+
 // Constructor
 Board* newBoard() {
     Board* board = (Board*)malloc(sizeof(Board));
     int i;
     for (i = 0; i < 8; i++) {
         if (i == 4){
-            board->cells[0][i] = newCell(newPiece("Black", "King", 10));
-            board->cells[7][i] = newCell(newPiece("White", "King", 10));
+            board->cells[0][i] = newCell(newPiece(BLACK_KING, 10));
+            board->cells[7][i] = newCell(newPiece(WHITE_KING, 10));
         }
         else {
-            board->cells[0][i] = newCell(newPiece("Black", "Horse", 3));
-            board->cells[7][i] = newCell(newPiece("White", "Horse", 3));
+            board->cells[0][i] = newCell(newPiece(BLACK_HORSE, 3));
+            board->cells[7][i] = newCell(newPiece(WHITE_HORSE, 3));
         }
         if(board == NULL){
             printf("Error al crear el tablero");
@@ -36,29 +42,12 @@ void freeBoard(Board* board) {
     free(board);
 }
 
-char* get_key(Board* board, int x, int y) {
-    if (board->cells[x][y] != NULL) {
-        // Unimos el equipo y el tipo de pieza en formato "team_type"
-        char* key = (char*)malloc(20 * sizeof(char));
-        strcpy(key, getTeam(board->cells[x][y]->piece));
-        strcat(key, "_");
-        strcat(key, getType(board->cells[x][y]->piece));
-        return key;
-    }
-    return NULL;
-}
-
 void printBoard(Board* board) {
     int i;
     for (i = 0; i < 8; i++) {
         int j;
         for (j = 0; j < 8; j++) {
-            if (board->cells[i][j] != NULL) {
-                printf("%c ", get_value(get_key(board, i, j)));
-            }
-            else {
-                printf("- ");
-            }
+            printf("%c ", getValue(board->cells[i][j]));
         }
         printf("\n");
     }

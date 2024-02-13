@@ -1,30 +1,22 @@
 #ifndef PIECE
 #define PIECE
 
-typedef struct {
-    char* key;
-    char value;
-} dict;
-
-char get_value(char* key);
-
 typedef struct piece{
-    char* team;
-    char* type;
-    int value;
+    int type;
+    int points;
     int x, y;
     int inMovement;
 } Piece;
 
-Piece* newPiece(char* team, char* type, int value);
+char get_value(Piece* piece);
+
+Piece* newPiece(int type, int points);
 
 void freePiece(Piece* piece);
 
-char* getType(Piece* piece);
+int getType(Piece* piece);
 
-char* getTeam(Piece* piece);
-
-int getValue(Piece* piece);
+int getPoints(Piece* piece);
 
 int getX(Piece* piece);
 

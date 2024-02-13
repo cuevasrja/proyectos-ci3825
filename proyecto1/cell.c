@@ -19,3 +19,11 @@ void freeCell(Cell* cell) {
 void setPiece(Cell* cell, Piece* piece) {
     cell->piece = piece;
 }
+
+// Getter
+char getValue(Cell* cell) {
+    if (cell == NULL) {
+        return '-';
+    }
+    return get_value(cell->piece);
+}
