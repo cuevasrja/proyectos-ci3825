@@ -6,12 +6,20 @@
 
 int n = sizeof(menu) / sizeof(menu[0]);
 
+/*
+This function prints the menu
+*/
 void showMenu() {
     for (int i = 0; i < n; i++) {
         printf("%s\n", menu[i]);
     }
 }
 
+/*
+This function checks if the user wants to exit
+@param options: the options the user entered
+@return 0 if the user wants to exit, 1 otherwise
+*/
 int willExit(char options[INPUT]) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
@@ -22,12 +30,19 @@ int willExit(char options[INPUT]) {
     return 1;
 }
 
+/*
+This function checks if the options entered by the user are valid
+@param options: the options the user entered
+@return 1 if the options are valid, 0 otherwise
+*/
 int isValidOption(char options[INPUT]) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
+        // If the character is null, we break the loop because we reached the end of the string
         if (options[i] == '\0') {
             break;
         }
+        // If the character is not a valid option, we return 0
         if (tolower(options[i]) != 'w' && tolower(options[i]) != 'a' && tolower(options[i]) != 's' && tolower(options[i]) != 'd' && tolower(options[i]) != 'x' && tolower(options[i]) != 'q') {
             return 0;
         }
@@ -35,6 +50,10 @@ int isValidOption(char options[INPUT]) {
     return 1;
 }
 
+/*
+This function asks the user to enter the options
+@param options: The array where the options will be stored
+*/
 void enterOptions(char options[INPUT]) {
     // First we clean the options
     int i = 0;
@@ -58,32 +77,34 @@ void enterOptions(char options[INPUT]) {
 int main() {
     Board* board = newBoard();
     char options[INPUT];
+    // While the user doesn't want to exit, we keep asking for options
     while (willExit(options)) {
         printBoard(board);
         showMenu();
         enterOptions(options);
         int i = 0;
+        // While the character is not null and we haven't reached the end of the string
         while(options[i] != '\0' && i < INPUT) {
             switch (tolower(options[i])) {
-                case 'w':
+                case 'w': // Up
                     printf("Mover arriba\n");
                     break;
-                case 'a':
+                case 'a': // Left
                     printf("Mover izquierda\n");
                     break;
-                case 's':
+                case 's': // Down
                     printf("Mover abajo\n");
                     break;
-                case 'd':
+                case 'd': // Right
                     printf("Mover derecha\n");
                     break;
-                case 'x':
+                case 'x': // Select piece
                     printf("Seleccionar pieza\n");
                     break;
-                case 'q':
+                case 'q': // Exit
                     printf("Salir\n");
                     break;
-                default:
+                default: // Invalid option
                     printf("Opción inválida\n");
                     break;
             }
