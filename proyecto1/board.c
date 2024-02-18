@@ -12,6 +12,28 @@
 # define N 8
 # define M 5
 
+int horseMoves[8][2] = {
+    {2, 1},
+    {1, 2},
+    {-1, 2},
+    {-2, 1},
+    {-2, -1},
+    {-1, -2},
+    {1, -2},
+    {2, -1}
+};
+
+int kingMoves[8][2] = {
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {-1, 1},
+    {-1, 0},
+    {-1, -1},
+    {0, -1},
+    {1, -1}
+};
+
 // Constructor
 Board* newBoard() {
     Board* board = (Board*)malloc(sizeof(Board));
