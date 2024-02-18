@@ -4,8 +4,9 @@
 # include "main.h"
 # include "board.h"
 
+int n = sizeof(menu) / sizeof(menu[0]);
+
 void showMenu() {
-    int n = sizeof(menu) / sizeof(menu[0]);
     for (int i = 0; i < n; i++) {
         printf("%s\n", menu[i]);
     }
