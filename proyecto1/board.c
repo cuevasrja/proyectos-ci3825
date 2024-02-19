@@ -176,7 +176,6 @@ void printBoard(Board * board){
         {
             new_char_cells[i][j] = board->char_cells[i][j];
         }
-        printf("\n");
     }
         
 
