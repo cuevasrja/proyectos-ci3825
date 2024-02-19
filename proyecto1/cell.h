@@ -2,19 +2,11 @@
 #define CELL
 
 #include "piece.h"
-// ? Y si hay varias piezas ?
 typedef struct cell{
-    Piece* piece;
+    int owner;
+    int matrix[5][5];
 } Cell;
 
-Cell* newCell(Piece* piece);
-
-void freeCell(Cell* cell);
-
-void setPiece(Cell* cell, Piece* piece);
-
-char getValue(Cell* cell);
-
-Piece* getPieceIn(Cell* cell, int x, int y);
+void init_cell(Cell * cell, int piece_id);
 
 #endif

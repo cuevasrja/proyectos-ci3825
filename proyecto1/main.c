@@ -75,11 +75,11 @@ void enterOptions(char options[INPUT]) {
 }
 
 int main() {
-    Board* board = newBoard();
+    Board board = newBoard();
     char options[INPUT];
     // While the user doesn't want to exit, we keep asking for options
     while (willExit(options)) {
-        printBoard(board);
+        printBoard(&board);
         showMenu();
         enterOptions(options);
         int i = 0;
