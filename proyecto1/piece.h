@@ -19,10 +19,17 @@ typedef struct piece{
     int points;
     int x, y;
     int inMovement;
+    int patience;
 } Piece;
 
+/*
+Paciencia inicial de las piezas
+- 0: Caballos
+- 1: Reyes
+*/
+int initPatience[2] = {233, 70};
 
-void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points);
+void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points, int patience);
 
 char get_piece_char(PieceType type, PieceColor color);
 
@@ -31,6 +38,8 @@ int getPoints(Piece * piece);
 int getX(Piece * piece);
 
 int getY(Piece * piece);
+
+int getPatience(Piece * piece);
 
 void up(Piece * piece);
 
@@ -41,5 +50,7 @@ void right(Piece * piece);
 void left(Piece * piece);
 
 void setPosition(Piece * piece, int x, int y);
+
+void setPatience(Piece * piece, int patience);
 
 #endif

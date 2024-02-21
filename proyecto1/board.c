@@ -6,29 +6,7 @@
 # define N 8
 # define M 5
 
-int horseMoves[8][2] = {
-    {2, 1},
-    {1, 2},
-    {-1, 2},
-    {-2, 1},
-    {-2, -1},
-    {-1, -2},
-    {1, -2},
-    {2, -1}
-};
-
-int kingMoves[8][2] = {
-    {1, 0},
-    {1, 1},
-    {0, 1},
-    {-1, 1},
-    {-1, 0},
-    {-1, -1},
-    {0, -1},
-    {1, -1}
-};
-
-// Constructor
+/* Constructo del tablero */
 Board newBoard() {
     Board board;
 
@@ -38,8 +16,8 @@ Board newBoard() {
     board.white_king_id = 0;
     board.black_king_id = 1;
 
-    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10);
-    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10);
+    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10, initPatience[KING]);
+    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10, initPatience[KING]);
 
     /* Inicializacion de los caballeros de cada jugador */
 
@@ -47,13 +25,13 @@ Board newBoard() {
     /* Los caballeros blancos comienzan en la posicion 2 y llegan hasta la pos 8*/
     for (i = 2; i < 9; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3);
+        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3, initPatience[KNIGHT]);
     }
 
     /* Los caballeros blancos comienzan en la posicion 9 y llegan hasta la pos 15*/
     for (i = 9; i < 16; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3);
+        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3, initPatience[KNIGHT]);
     }
 
     /* Inicializacion de las celdas del tablero */
@@ -133,16 +111,40 @@ Board newBoard() {
     return board;
 }
 
+/*
+Funcion que retorna el tipo de pieza en una celda
+@param board tablero de juego
+@param cell celda de la cual se quiere obtener el tipo de pieza
+@param i coordenada i de la celda
+@param j coordenada j de la celda
+@return tipo de pieza en la celda
+*/
 PieceType get_piece_type(Board * board, Cell * cell, int i, int j){
     int index = cell -> matrix[i][j];
     return  board -> pieces[index].type;
 }
 
+/*
+Funcion que retorna el color de la pieza en una celda
+@param board tablero de juego
+@param cell celda de la cual se quiere obtener el color de la pieza
+@param i coordenada i de la celda
+@param j coordenada j de la celda
+@return color de la pieza en la celda
+*/
 PieceColor get_piece_color(Board * board, Cell * cell, int i, int j){
     int index = cell -> matrix[i][j];
     return  board -> pieces[index].color;
 }
 
+/*
+Funcion que retorna el caracter que representa una pieza
+@param Board tablero de juego
+@param Cell celda de la cual se quiere obtener el caracter de la pieza
+@param i coordenada i de la celda
+@param j coordenada j de la celda
+@return caracter que representa la pieza
+*/
 char get_piece_char_ij(Board * board, Cell * cell, int i, int j){
     PieceType type = get_piece_type(board, cell, i, j);
     PieceColor color = get_piece_color(board, cell, i, j);
@@ -150,12 +152,16 @@ char get_piece_char_ij(Board * board, Cell * cell, int i, int j){
     return get_piece_char(type, color);
 }
 
+/*
+Funcion que imprime la tabla de caracteres
+@param new_char_cells tabla de caracteres que se quiere imprimir
+*/
 void print_char_cells(char new_char_cells[33][33]){
-
+    int n = sizeof(new_char_cells) / sizeof(new_char_cells[0]);
     int i, j;
-    for (i = 0; i < 33; i++)
+    for (i = 0; i < n; i++)
     {
-        for ( j = 0; j < 33; j++)
+        for ( j = 0; j < n; j++)
         {
             printf("%c", new_char_cells[i][j]);
         }
@@ -164,6 +170,10 @@ void print_char_cells(char new_char_cells[33][33]){
 
 }
 
+/*
+Funcion que imprime el tablero de juego
+@param board tablero de juego
+*/
 void printBoard(Board * board){
 
     char new_char_cells[33][33];
@@ -200,4 +210,121 @@ void printBoard(Board * board){
     }
 
     print_char_cells(new_char_cells);
+}
+
+/*
+Funcion que busca un movimiento aleatorio para una pieza
+@param board tablero de juego
+@param piece pieza de la cual se quiere encontrar un movimiento aleatorio
+@return puntero a un arreglo de dos enteros que representan el movimiento aleatorio
+en caso de que no se pueda realizar un movimiento, retorna NULL
+*/
+int* getRandomMove(Board * board, Piece * piece){
+    int x = getX(piece);
+    int y = getY(piece);
+
+    if (piece -> type == KNIGHT){
+        int n = sizeof(horseMoves) / sizeof(horseMoves[0]);
+        int random = rand() % n;
+        int inBounds = x + horseMoves[random][0] >= 0 && x + horseMoves[random][0] <= 7 && y + horseMoves[random][1] >= 0 && y + horseMoves[random][1] <= 7;
+        if (!inBounds) return NULL;
+        /* Chequeamos que la casilla destino no tenga como dueño una pieza del mismo equipo */
+        Piece* destination = &(board -> pieces[board ->cells[x + horseMoves[random][0]][y + horseMoves[random][1]].owner]);
+        if (destination -> color == piece -> color) return NULL;
+        int validMove[2] = horseMoves[random];
+        validMove[0] += x;
+        validMove[1] += y;
+        return validMove;
+    }
+    else if (piece -> type == KING){
+        int n = sizeof(kingMoves) / sizeof(kingMoves[0]);
+        int random = rand() % n;
+        int inBounds = x + kingMoves[random][0] >= 0 && x + kingMoves[random][0] <= 7 && y + kingMoves[random][1] >= 0 && y + kingMoves[random][1] <= 7;
+        if (!inBounds) return NULL;
+        /* Chequeamos que la casilla destino no tenga como dueño una pieza del mismo equipo */
+        Piece* destination = &(board -> pieces[board ->cells[x + kingMoves[random][0]][y + kingMoves[random][1]].owner]);
+        if (destination -> color == piece -> color) return NULL;
+        int validMove[2] = kingMoves[random];
+        validMove[0] += x;
+        validMove[1] += y;
+        return validMove;
+    }
+    return NULL;
+}
+
+/*
+Función que retorna la distancia de manhattan entre dos puntos
+@param x1 coordenada x del primer punto
+@param y1 coordenada y del primer punto
+@param x2 coordenada x del segundo punto
+@param y2 coordenada y del segundo punto
+@return distancia de manhattan entre los dos puntos
+*/
+int manhattanDistance(int x1, int y1, int x2, int y2){
+    return abs(x1 - x2) + abs(y1 - y2);
+}
+
+/*
+Función que retorna la pieza más cercana al caballo
+@param board tablero de juego
+@param piece pieza de la cual se quiere encontrar la pieza más cercana
+@return puntero a la pieza más cercana
+*/
+Piece* getClosestEnemy(Board * board, Piece * piece){
+    /*
+    Buscamos las coordenadas de la pieza (x, y)
+    */
+    int x = getX(piece);
+    int y = getY(piece);
+    /*
+    Inicializamos la distancia mínima (100) y la pieza más cercana (NULL)
+    */
+    int minDistance = 100;
+    Piece * closestEnemy = NULL;
+    int numPieces = sizeof(board -> pieces) / sizeof(board -> pieces[0]);
+    int i;
+    /*
+    Iteramos sobre todas las piezas del tablero
+    */
+    for (i = 0; i < numPieces; i++){
+        /*
+        Si la pieza es del mismo color que la pieza que estamos analizando, la ignoramos
+        */
+        if (board -> pieces[i].color == piece -> color){
+            continue;
+        }
+        /*
+        En caso contrario, calculamos la distancia de manhattan entre la pieza que estamos 
+        analizando y la pieza actual
+        */
+        int enemyX = getX(&(board -> pieces[i]));
+        int enemyY = getY(&(board -> pieces[i]));
+        int distance = manhattanDistance(x, y, enemyX, enemyY);
+        /*
+        Si la distancia es menor que la distancia mínima, actualizamos la distancia mínima
+        */
+        if (distance < minDistance){
+            minDistance = distance;
+            closestEnemy = &(board -> pieces[i]);
+        }
+    }
+    return closestEnemy;
+}
+
+/*
+Actualiza la paciencia de una pieza (en segundos). Para calcular la paciencia, se toma en cuenta
+la distancia de manhattan entre la pieza y la pieza más cercana del color contrario, multiplicada
+por 100 y dividida entre el valor de la pieza enemiga mas cercana.
+@param board tablero de juego
+@param piece pieza de la cual se quiere actualizar la paciencia
+*/
+void updatePatience(Board * board, Piece * piece){
+    Piece * closestEnemy = getClosestEnemy(board, piece);
+    int x = getX(piece);
+    int y = getY(piece);
+    int enemyX = getX(closestEnemy);
+    int enemyY = getY(closestEnemy);
+    int distance = manhattanDistance(x, y, enemyX, enemyY);
+    int patience = distance * 100 / closestEnemy -> points;
+    setPatience(piece, patience);
 }

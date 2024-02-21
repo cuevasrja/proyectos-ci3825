@@ -4,6 +4,30 @@
 #include "cell.h"
 #include "piece.h"
 
+/* Movimientos posibles del caballo */
+int horseMoves[8][2] = {
+    {2, 1},
+    {1, 2},
+    {-1, 2},
+    {-2, 1},
+    {-2, -1},
+    {-1, -2},
+    {1, -2},
+    {2, -1}
+};
+
+/* Movimientos posibles del rey */
+int kingMoves[8][2] = {
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {-1, 1},
+    {-1, 0},
+    {-1, -1},
+    {0, -1},
+    {1, -1}
+};
+
 typedef struct board {
     /* Arreglo que contiene las piezas del juego*/
     Piece pieces[16];
