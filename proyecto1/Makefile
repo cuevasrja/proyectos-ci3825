@@ -1,6 +1,6 @@
 # TODO: Buscar flag para compilar con hilos
 C = gcc
-SOURCE = piece.h piece.c cell.h cell.c board.h board.c main.c
+SOURCE = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c main.c
 TARGET = main.out
 FLAGS = -pthread
 
