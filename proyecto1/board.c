@@ -6,13 +6,6 @@
 # define N 8
 # define M 5
 
-/*
-Paciencia inicial de las piezas
-- 0: Caballos
-- 1: Reyes
-*/
-int initPatience[2] = {233, 70};
-
 /* Movimientos posibles del caballo */
 int horseMoves[8][2] = {
     {2, 1},
@@ -37,6 +30,9 @@ int kingMoves[8][2] = {
     {1, -1}
 };
 
+/* Caracteres para el cursor*/
+char cursor_chars[2] = {'+', '*'};
+
 /* Constructo del tablero */
 Board newBoard() {
     Board board;
@@ -47,8 +43,8 @@ Board newBoard() {
     board.white_king_id = 0;
     board.black_king_id = 1;
 
-    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10, initPatience[KING]);
-    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10, initPatience[KING]);
+    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10, getInitPatience(KING));
+    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10, getInitPatience(KING));
 
     /* Inicializacion de los caballeros de cada jugador */
 
@@ -56,13 +52,13 @@ Board newBoard() {
     /* Los caballeros blancos comienzan en la posicion 2 y llegan hasta la pos 8*/
     for (i = 2; i < 9; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3, initPatience[KNIGHT]);
+        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3, getInitPatience(KNIGHT));
     }
 
     /* Los caballeros blancos comienzan en la posicion 9 y llegan hasta la pos 15*/
     for (i = 9; i < 16; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3, initPatience[KNIGHT]);
+        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3, getInitPatience(KNIGHT));
     }
 
     /* Inicializacion de las celdas del tablero */
@@ -120,7 +116,7 @@ Board newBoard() {
     }
 
     /* Inicializacion del resto de bordes*/
-    for ( i = 1; i < 32; i++)
+    for (i = 1; i < 32; i++)
     {
         for (j = 0; j < 33; j++)
         {
@@ -138,6 +134,17 @@ Board newBoard() {
             }
         }
     }
+
+    /* Inicializacion del cursor */
+
+    board.cursor.board_row = 3;
+    board.cursor.board_col = 3;
+    board.cursor.cell_row = 2;
+    board.cursor.cell_col = 2;
+    board.cursor.is_cell_valid = 0;
+
+    /* El juego comienza con el turno del usuario */
+    board.turn = USER;
     
     return board;
 }
@@ -240,9 +247,225 @@ void printBoard(Board * board){
         }
     }
 
+    /* Dudoso */
+    /* Posicionamos el cursor */
+    int cur_board_row = board->cursor.board_row;
+    int cur_board_col = board->cursor.board_col;
+    int cur_cell_row  = board->cursor.cell_row;
+    int cur_cell_col  = board->cursor.cell_col;
+    int c = board->cursor.is_cell_valid;
+    char cur_char = cursor_chars[c];
+    new_char_cells[cur_board_row*4 + cur_cell_row][cur_board_col*4 + cur_cell_col] = cur_char;
+
     print_char_cells(new_char_cells);
 }
 
+void move_cursor(Board * board, int cursor_position_input[2]){
+
+    int board_row = board->cursor.board_row;
+    int board_col = board->cursor.board_col; 
+    int cell_row = board->cursor.cell_row;
+    int cell_col = board->cursor.cell_col;
+    int des_x = cursor_position_input[0];
+    int des_y = cursor_position_input[1];
+
+    int new_board_row;
+    int new_board_col;
+    int new_cell_row;
+    int new_cell_col;
+
+    int abs_row = board_row*M + cell_row + des_y;
+    int abs_col = board_col*M + cell_col + des_x;
+
+    if (abs_row >= N*M)
+    {
+        new_board_row = N - 1;
+        new_cell_row = M - 1;
+    }
+    else if (abs_row < 0)
+    {
+        new_board_row = 0;
+        new_cell_row = 0;
+    }
+    else
+    {
+        /* Si no se excede de ninguna forma los bordes de la tabla*/
+        new_board_row = abs_row/M;
+
+        if (des_y >= 0)
+        {
+            new_cell_row = (cell_row + des_y)%M;
+        } 
+        else
+        {
+            new_cell_row = (-1*des_y)%M;
+            new_cell_row = M - new_cell_row;
+            new_cell_row = (cell_row + new_cell_row)%M;
+        }
+        
+    }
+
+
+    if (abs_col >= N*M)
+    {
+        new_board_col = N - 1;
+        new_cell_col = M - 1;
+    }
+    else if (abs_col < 0)
+    {
+        new_board_col = 0;
+        new_cell_col = 0;
+    }
+    else
+    {
+        /* Si no se excede de ninguna forma los bordes de la tabla*/
+        new_board_col = abs_col/M;
+
+        if (des_x >= 0)
+        {
+            new_cell_col = (cell_col + des_x)%M;
+        } 
+        else
+        {
+            new_cell_col = (-1*des_x)%M;
+            new_cell_col = M - new_cell_col;
+            new_cell_col = (cell_col + new_cell_col)%M;
+        }
+        
+    }
+
+    /* Actualizamos la posicion del cursor */
+    board->cursor.board_col = new_board_col;
+    board->cursor.board_row = new_board_row;
+    board->cursor.cell_col  = new_cell_col;
+    board->cursor.cell_row  = new_cell_row;
+
+}
+
+void is_selection_valid(Board * board){
+
+    if (board->turn != USER)
+    {
+        printf("No es turno del usuario\n");
+        return;
+    }
+
+    /* Accedemos a la posicion del cursor */
+    int board_row = board->cursor.board_row;
+    int board_col = board->cursor.board_col; 
+    int cell_row = board->cursor.cell_row;
+    int cell_col = board->cursor.cell_col;
+
+    /* Accedemos al dueño de la casilla */
+    int cell_owner = board->cells[board_row][board_col].owner;
+
+    if (cell_owner == -1)
+    {
+        board->cursor.is_cell_valid = 0;
+        return;
+    }
+
+    /* Si la casilla tiene dueño, accedemos al arreglo de piezas para saber de que team es*/
+    PieceColor color_piece = board->pieces[cell_owner].color;
+
+    if (color_piece == WHITE)
+    {
+        board->cursor.is_cell_valid = 1;
+        return;
+    }
+
+    board->cursor.is_cell_valid = 0;
+    
+}
+
+int is_play_valid(Board * board, int valid_piece_cell[2]){
+
+    int is_valid = 1;
+    int move_valid = 0;
+
+    if (board->turn != USER)
+    {
+        is_valid = 0;
+        printf("No es tu turno");
+        return is_valid;
+    }
+
+    /* Accedemos a la posicion del cursor */
+    int board_row = board->cursor.board_row;
+    int board_col = board->cursor.board_col; 
+    int cell_row = board->cursor.cell_row;
+    int cell_col = board->cursor.cell_col;
+
+    /* Accedemos al dueño de la casilla */
+    int cell_owner = board->cells[board_row][board_col].owner;
+
+    if (cell_owner != -1)
+    {
+        PieceColor color_piece = board->pieces[cell_owner].color;
+        /* Si es una pieza del jugador entonces no es valido */
+        if (color_piece == WHITE)
+        {
+            is_valid = 0;
+            printf("Hay una pieza tuya ahi!\n");
+            return is_valid;
+        }
+    }
+
+    /* Revisamos si el tipo de pieza puede moverse a esa casilla*/
+    int piece_select = board->cells[valid_piece_cell[0]][valid_piece_cell[1]].owner;
+    PieceType type_piece = board->pieces[piece_select].type;
+
+    printf("Pieza escogida: %d \n", type_piece);
+        
+    int i, j, k;
+    /* Si es un rey */
+    if (type_piece == 1)
+    {              
+        for (i = 0; i < 8; i++)
+        {
+
+                j = board_row + kingMoves[i][0];
+                k = board_col + kingMoves[i][1];
+                printf("j: %d, k: %d, rc: %d, cc: %d \n", j, k, valid_piece_cell[0], valid_piece_cell[1]);
+                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
+                {
+                    continue;
+                }
+                move_valid = 1;
+                break;
+
+        }
+    } 
+    else
+    {
+        for (i = 0; i < 8; i++)
+        {
+                j = board_row + horseMoves[i][0];
+                k = board_col + horseMoves[i][1];
+                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
+                {
+                    continue;
+                }
+                move_valid = 1;
+                break;
+
+        }
+    }
+
+    if (board_row == valid_piece_cell[0] && board_col == valid_piece_cell[1])
+    {
+        move_valid = 1;
+    }
+
+    if (move_valid == 0)
+    {
+        printf("No se puede hacer ese movimiento\n");
+        is_valid = 0;
+    }
+
+    return is_valid;
+    
+}
 /*
 Funcion que revisa si un movimiento es valido
 @param board tablero de juego
@@ -282,7 +505,6 @@ en caso de que no se pueda realizar un movimiento, retorna NULL
 int* getRandomMove(Board * board, Piece * piece){
     int x = getX(piece);
     int y = getY(piece);
-
     int* validMove = (int*) malloc(2 * sizeof(int));
     /* Verificamos que malloc funcione correctamente */
     if (validMove == NULL) {
@@ -319,6 +541,7 @@ int* getRandomMove(Board * board, Piece * piece){
     free(validMove);
     return NULL;
 }
+
 
 /*
 Función que retorna la distancia de manhattan entre dos puntos

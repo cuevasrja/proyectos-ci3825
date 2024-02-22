@@ -12,6 +12,16 @@ Caracteres que representan las piezas
 */
 char chessPieces[2][2] = {{'N', 'K'}, {'z', 'x'}};
 
+/*Paciencia inicial de las piezas
+- 0: Caballos
+- 1: Reyes
+*/
+int initPatience[2] = {233, 70};
+
+int getInitPatience(PieceType type){
+    return initPatience[type];
+}
+
 /*
 Funcion que retorna el caracter que representa la pieza
 @param type Tipo de pieza

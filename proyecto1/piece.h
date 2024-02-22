@@ -26,6 +26,8 @@ void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int poin
 
 char get_piece_char(PieceType type, PieceColor color);
 
+int getInitPatience(PieceType type);
+
 int getPoints(Piece * piece);
 
 int getX(Piece * piece);
