@@ -1,5 +1,5 @@
 C = gcc
-SOURCE = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c main.c
+SOURCE = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c menu.h menu.c main.c
 TESTS = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c main_test_com_pipes.c
 TARGET = main.out
 FLAGS = -pthread

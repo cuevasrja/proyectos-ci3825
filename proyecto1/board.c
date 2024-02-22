@@ -6,6 +6,37 @@
 # define N 8
 # define M 5
 
+/*
+Paciencia inicial de las piezas
+- 0: Caballos
+- 1: Reyes
+*/
+int initPatience[2] = {233, 70};
+
+/* Movimientos posibles del caballo */
+int horseMoves[8][2] = {
+    {2, 1},
+    {1, 2},
+    {-1, 2},
+    {-2, 1},
+    {-2, -1},
+    {-1, -2},
+    {1, -2},
+    {2, -1}
+};
+
+/* Movimientos posibles del rey */
+int kingMoves[8][2] = {
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {-1, 1},
+    {-1, 0},
+    {-1, -1},
+    {0, -1},
+    {1, -1}
+};
+
 /* Constructo del tablero */
 Board newBoard() {
     Board board;
@@ -210,6 +241,35 @@ void printBoard(Board * board){
     }
 
     print_char_cells(new_char_cells);
+}
+
+/*
+Funcion que revisa si un movimiento es valido
+@param board tablero de juego
+@param piece pieza que se quiere mover
+@param x coordenada x a la que se quiere mover la pieza
+@param y coordenada y a la que se quiere mover la pieza
+@return 1 si el movimiento es valido, 0 en caso contrario
+*/
+int isValidMove(Board * board, Piece * piece, int x, int y){
+    int currentX = getX(piece);
+    int currentY = getY(piece);
+    int i;
+    if (piece -> type == KNIGHT){
+        for (i = 0; i < 8; i++){
+            if (currentX + horseMoves[i][0] == x && currentY + horseMoves[i][1] == y){
+                return 1;
+            }
+        }
+    }
+    else if (piece -> type == KING){
+        for (i = 0; i < 8; i++){
+            if (currentX + kingMoves[i][0] == x && currentY + kingMoves[i][1] == y){
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 /*

@@ -4,37 +4,6 @@
 #include "cell.h"
 #include "piece.h"
 
-/*
-Paciencia inicial de las piezas
-- 0: Caballos
-- 1: Reyes
-*/
-int initPatience[2] = {233, 70};
-
-/* Movimientos posibles del caballo */
-int horseMoves[8][2] = {
-    {2, 1},
-    {1, 2},
-    {-1, 2},
-    {-2, 1},
-    {-2, -1},
-    {-1, -2},
-    {1, -2},
-    {2, -1}
-};
-
-/* Movimientos posibles del rey */
-int kingMoves[8][2] = {
-    {1, 0},
-    {1, 1},
-    {0, 1},
-    {-1, 1},
-    {-1, 0},
-    {-1, -1},
-    {0, -1},
-    {1, -1}
-};
-
 typedef struct board {
     /* Arreglo que contiene las piezas del juego*/
     Piece pieces[16];
@@ -55,6 +24,18 @@ PieceColor get_piece_color(Board * board, Cell * cell, int i, int j);
 
 char get_piece_char_ij(Board * board, Cell * cell, int i, int j);
 
+void print_char_cells(char new_char_cells[33][33]);
+
 void printBoard(Board* board);
+
+int isValidMove(Board * board, Piece * piece, int x, int y);
+
+int* getRandomMove(Board * board, Piece * piece);
+
+int manhattanDistance(int x1, int y1, int x2, int y2);
+
+Piece* getClosestEnemy(Board * board, Piece * piece);
+
+void updatePatience(Board * board, Piece * piece);
 
 #endif
