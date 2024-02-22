@@ -15,7 +15,7 @@ char* menu[] = {
 int menuSize = sizeof(menu) / sizeof(menu[0]);
 
 /*
-This function prints the menu
+Esta función muestra el menú
 */
 void showMenu() {
     for (int i = 0; i < menuSize; i++) {
@@ -24,9 +24,9 @@ void showMenu() {
 }
 
 /*
-This function checks if the user wants to exit
-@param options: the options the user entered
-@return 0 if the user wants to exit, 1 otherwise
+Esta función verifica si el usuario quiere salir
+@param options: las opciones que el usuario ingresó
+@return 0 si el usuario quiere salir, 1 si no
 */
 int willExit(char options[INPUT]) {
     int i = 0;
@@ -39,18 +39,18 @@ int willExit(char options[INPUT]) {
 }
 
 /*
-This function checks if the options entered by the user are valid
-@param options: the options the user entered
-@return 1 if the options are valid, 0 otherwise
+Esta función verifica si las opciones ingresadas por el usuario son válidas
+@param options: las opciones que el usuario ingresó
+@return 1 si las opciones son válidas, 0 si no
 */
 int isValidOption(char options[INPUT]) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
-        // If the character is null, we break the loop because we reached the end of the string
+        /* Si el caracter es nulo, salimos del ciclo */
         if (options[i] == '\0') {
             break;
         }
-        // If the character is not a valid option, we return 0
+        /* Si el caracter no es una opción válida, retornamos 0 */
         if (tolower(options[i]) != 'w' && tolower(options[i]) != 'a' && tolower(options[i]) != 's' && tolower(options[i]) != 'd' && tolower(options[i]) != 'x' && tolower(options[i]) != 'q') {
             return 0;
         }
@@ -59,21 +59,21 @@ int isValidOption(char options[INPUT]) {
 }
 
 /*
-This function asks the user to enter the options
-@param options: The array where the options will be stored
+Esta función pide al usuario que ingrese las opciones
+@param options: las opciones que el usuario ingresó
 */
 void enterOptions(char options[INPUT]) {
-    // First we clean the options
+    /* Primero volvemos nulas todas las opciones anteriores */
     int i = 0;
     for (i = 0; i < INPUT; i++) {
         options[i] = '\0';
     }
-    // We ask the user to enter the options
+    /* Luego pedimos al usuario que ingrese las opciones */
     printf("Ingrese una opción (Solo puede ingresar un máximo de %d acciones): \033[1;92m", INPUT);
     scanf("%s", options);
     printf("\033[0m");
 
-    // We check if all the options are valid
+    /* Verificamos que las opciones sean válidas */
     while (!isValidOption(options)) {
         printf("Opción inválida, por favor ingrese una opción válida (Solo puede ingresar un máximo de %d acciones): \033[1;92m", INPUT);
         scanf("%s", options);

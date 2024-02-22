@@ -26,32 +26,32 @@ int main() {
    int valid_piece_cell[2] = {-1, -1};
    int check_play = 0;
 
-    // While the user doesn't want to exit, we keep asking for options
+    /* Mientras el usuario no quiera salir, iteramos */
     while (willExit(options)) {
         printBoard(&board);
         showMenu();
         enterOptions(options);
         int i = 0;
-        // While the character is not null and we haven't reached the end of the string
+        /* Mientras que el caracter no sea nulo y no se haya llegado al final del arreglo */
         while(options[i] != '\0' && i < INPUT) {
             switch (tolower(options[i])) {
-                case 'w': // Up
+                case 'w': /* Arriba */
                     printf("Mover arriba\n");
                     cursor_position[1] -=1;
                     break;
-                case 'a': // Left
+                case 'a': /* Izquierda */
                     printf("Mover izquierda\n");
                     cursor_position[0] -=1;
                     break;
-                case 's': // Down
+                case 's': /* Abajo */
                     printf("Mover abajo\n");
                     cursor_position[1] +=1;
                     break;
-                case 'd': // Right
+                case 'd': /* Derecha */
                     printf("Mover derecha\n");
                     cursor_position[0] +=1;
                     break;
-                case 'x': // Select piece
+                case 'x': /* Seleccionar pieza */
                     printf("Seleccionar pieza\n");
                     /* Si llegamos hasta aca, significa que ya tenemos 
                     la futura casilla del cursor en cursor position.
@@ -72,10 +72,10 @@ int main() {
                     i = INPUT;
 
                     break;
-                case 'q': // Exit
+                case 'q': /* Salir */
                     printf("Salir\n");
                     break;
-                default: // Invalid option
+                default: /* Opción inválida */
                     printf("Opción inválida\n");
                     break;
             }
