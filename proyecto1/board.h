@@ -34,6 +34,7 @@ typedef struct board {
     int black_king_id;
     int white_king_id;
     Turn turn;
+    int winner;
     Cursor cursor;
 } Board;
 
@@ -53,11 +54,11 @@ void move_cursor(Board * board, int cursor_position_input[2]);
 
 void is_selection_valid(Board * board);
 
+int isValidMove(Board * board, Piece * piece, int x, int y);
+
 int is_play_valid(Board * board, int valid_piece_cell[2]);
 
 void printBoard(Board* board);
-
-int isValidMove(Board * board, Piece * piece, int x, int y);
 
 int* getRandomMove(Board * board, Piece * piece);
 
@@ -66,5 +67,9 @@ int manhattanDistance(int x1, int y1, int x2, int y2);
 Piece* getClosestEnemy(Board * board, Piece * piece);
 
 void updatePatience(Board * board, Piece * piece);
+
+int isWinner(Board * board);
+
+void checkEat(Board * board, Piece * piece, int x, int y);
 
 #endif

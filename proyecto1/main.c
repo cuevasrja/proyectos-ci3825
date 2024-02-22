@@ -11,6 +11,10 @@ int main() {
 
     /* options es un arreglo de caracteres que guarda el input del usuario */
     char options[INPUT];
+    int j;
+    for (j = 0; j < INPUT; j++) {
+        options[j] = '\0';
+    }
 
     /* cursor_position es un arreglo de enteros que indica en que posicion 
        debe estar el cursor.
@@ -26,11 +30,15 @@ int main() {
    int valid_piece_cell[2] = {-1, -1};
    int check_play = 0;
 
-    /* Mientras el usuario no quiera salir, iteramos */
-    while (willExit(options)) {
+    /* Mientras que no haya un ganador */
+    while (!isWinner(&board)) {
         printBoard(&board);
         showMenu();
         enterOptions(options);
+        if (willExit(options)){ /* Si el usuario quiere salir, salimos */
+            printf("Saliendo...\n");
+            break;
+        }
         int i = 0;
         /* Mientras que el caracter no sea nulo y no se haya llegado al final del arreglo */
         while(options[i] != '\0' && i < INPUT) {
@@ -71,9 +79,6 @@ int main() {
                     
                     i = INPUT;
 
-                    break;
-                case 'q': /* Salir */
-                    printf("Salir\n");
                     break;
                 default: /* Opción inválida */
                     printf("Opción inválida\n");
@@ -121,6 +126,9 @@ int main() {
         
     }
     
-    
+    /* Si hay un ganador, decimos quien es */
+    if (isWinner(&board)) {
+        printf("El ganador es: %s\n", board.winner == 0 ? "Usuario" : "IA");
+    }
     return 0;
 }

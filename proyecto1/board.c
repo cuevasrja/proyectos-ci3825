@@ -145,6 +145,9 @@ Board newBoard() {
 
     /* El juego comienza con el turno del usuario */
     board.turn = USER;
+
+    /* No hay ganador al principio */
+    board.winner = -1;
     
     return board;
 }
@@ -260,6 +263,11 @@ void printBoard(Board * board){
     print_char_cells(new_char_cells);
 }
 
+/*
+Funcion que mueve el cursor
+@param board tablero de juego
+@param cursor_position_input arreglo de dos enteros que representan el movimiento del cursor
+*/
 void move_cursor(Board * board, int cursor_position_input[2]){
 
     int board_row = board->cursor.board_row;
@@ -342,6 +350,10 @@ void move_cursor(Board * board, int cursor_position_input[2]){
 
 }
 
+/*
+Funcion que avisar si la seleccion del cursor es valida
+@param board tablero de juego
+*/
 void is_selection_valid(Board * board){
 
     if (board->turn != USER)
@@ -378,6 +390,40 @@ void is_selection_valid(Board * board){
     
 }
 
+/*
+Funcion que revisa si un movimiento es valido
+@param board tablero de juego
+@param piece pieza que se quiere mover
+@param x coordenada x a la que se quiere mover la pieza
+@param y coordenada y a la que se quiere mover la pieza
+@return 1 si el movimiento es valido, 0 en caso contrario
+*/
+int isValidMove(Board * board, Piece * piece, int x, int y){
+    int currentX = getX(piece);
+    int currentY = getY(piece);
+    int i;
+    if (piece -> type == KNIGHT){
+        for (i = 0; i < 8; i++){
+            if (currentX + horseMoves[i][0] == x && currentY + horseMoves[i][1] == y){
+                return 1;
+            }
+        }
+    }
+    else if (piece -> type == KING){
+        for (i = 0; i < 8; i++){
+            if (currentX + kingMoves[i][0] == x && currentY + kingMoves[i][1] == y){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+Funcion devuelve si es valido el movimiento de una pieza
+@param board tablero de juego
+@param valid_piece_cell arreglo de dos enteros que representan la celda de la pieza que se quiere mover
+*/
 int is_play_valid(Board * board, int valid_piece_cell[2]){
 
     int is_valid = 1;
@@ -413,44 +459,12 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
 
     /* Revisamos si el tipo de pieza puede moverse a esa casilla*/
     int piece_select = board->cells[valid_piece_cell[0]][valid_piece_cell[1]].owner;
+    Piece* piece = &(board->pieces[piece_select]);
     PieceType type_piece = board->pieces[piece_select].type;
 
     printf("Pieza escogida: %d \n", type_piece);
         
-    int i, j, k;
-    /* Si es un rey */
-    if (type_piece == 1)
-    {              
-        for (i = 0; i < 8; i++)
-        {
-
-                j = board_row + kingMoves[i][0];
-                k = board_col + kingMoves[i][1];
-                printf("j: %d, k: %d, rc: %d, cc: %d \n", j, k, valid_piece_cell[0], valid_piece_cell[1]);
-                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
-                {
-                    continue;
-                }
-                move_valid = 1;
-                break;
-
-        }
-    } 
-    else
-    {
-        for (i = 0; i < 8; i++)
-        {
-                j = board_row + horseMoves[i][0];
-                k = board_col + horseMoves[i][1];
-                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
-                {
-                    continue;
-                }
-                move_valid = 1;
-                break;
-
-        }
-    }
+    move_valid = isValidMove(board, piece, valid_piece_cell[0], valid_piece_cell[1]);
 
     if (board_row == valid_piece_cell[0] && board_col == valid_piece_cell[1])
     {
@@ -465,34 +479,6 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
 
     return is_valid;
     
-}
-/*
-Funcion que revisa si un movimiento es valido
-@param board tablero de juego
-@param piece pieza que se quiere mover
-@param x coordenada x a la que se quiere mover la pieza
-@param y coordenada y a la que se quiere mover la pieza
-@return 1 si el movimiento es valido, 0 en caso contrario
-*/
-int isValidMove(Board * board, Piece * piece, int x, int y){
-    int currentX = getX(piece);
-    int currentY = getY(piece);
-    int i;
-    if (piece -> type == KNIGHT){
-        for (i = 0; i < 8; i++){
-            if (currentX + horseMoves[i][0] == x && currentY + horseMoves[i][1] == y){
-                return 1;
-            }
-        }
-    }
-    else if (piece -> type == KING){
-        for (i = 0; i < 8; i++){
-            if (currentX + kingMoves[i][0] == x && currentY + kingMoves[i][1] == y){
-                return 1;
-            }
-        }
-    }
-    return 0;
 }
 
 /*
@@ -618,4 +604,39 @@ void updatePatience(Board * board, Piece * piece){
     int distance = manhattanDistance(x, y, enemyX, enemyY);
     int patience = distance * 100 / closestEnemy -> points;
     setPatience(piece, patience);
+}
+
+/*
+Funcion que verifica si hay un ganador
+@param board tablero de juego
+@return 1 si hay un ganador, 0 en caso contrario
+*/
+int isWinner(Board * board){
+    return board -> winner != -1;
+}
+
+/*
+Funcion que revisa si al un pieza llegar a una casilla, se come a otra pieza
+@param board tablero de juego
+@param piece pieza que se quiere mover
+@param x coordenada x a la que se quiere mover la pieza
+@param y coordenada y a la que se quiere mover la pieza
+*/
+void checkEat(Board * board, Piece * piece, int x, int y){
+    /* Chequeamos que la celda no este vacia */
+    if (board -> cells[x][y].owner == -1) return;
+
+    Piece* destination = &(board -> pieces[board -> cells[x][y].owner]);
+    /* Chequeamos que la pieza no sea del mismo color */
+    if (destination -> color == piece -> color) return;
+    /* Chequeamos que la pieza no sea un rey, si lo es, el juego termina */
+    if (destination -> type == KING){
+        board -> winner = piece -> color;
+    }
+    board -> cells[x][y].owner = piece -> id;
+    piece -> x = x;
+    piece -> y = y;
+    destination -> x = -1;
+    destination -> y = -1;
+    destination -> id = -1;
 }

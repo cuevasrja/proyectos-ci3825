@@ -26,16 +26,16 @@ void showMenu() {
 /*
 Esta función verifica si el usuario quiere salir
 @param options: las opciones que el usuario ingresó
-@return 0 si el usuario quiere salir, 1 si no
+@return 1 si el usuario quiere salir, 0 si no
 */
 int willExit(char options[INPUT]) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
         if (tolower(options[i]) == 'q'){
-            return 0;
+            return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
 /*
@@ -70,8 +70,9 @@ void enterOptions(char options[INPUT]) {
     }
     /* Luego pedimos al usuario que ingrese las opciones */
     printf("Ingrese una opción (Solo puede ingresar un máximo de %d acciones): \033[1;92m", INPUT);
-    scanf("%s", options);
-    printf("\033[0m");
+    /* Limitamos la entrada a 10 caracteres */
+    scanf("%10s", options);
+    printf("\033[0m\n");
 
     /* Verificamos que las opciones sean válidas */
     while (!isValidOption(options)) {
