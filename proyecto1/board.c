@@ -157,7 +157,7 @@ Funcion que imprime la tabla de caracteres
 @param new_char_cells tabla de caracteres que se quiere imprimir
 */
 void print_char_cells(char new_char_cells[33][33]){
-    int n = sizeof(new_char_cells) / sizeof(new_char_cells[0]);
+    int n = 33;
     int i, j;
     for (i = 0; i < n; i++)
     {
@@ -223,6 +223,14 @@ int* getRandomMove(Board * board, Piece * piece){
     int x = getX(piece);
     int y = getY(piece);
 
+    int* validMove = (int*) malloc(2 * sizeof(int));
+    /* Verificamos que malloc funcione correctamente */
+    if (validMove == NULL) {
+        printf("Error al reservar memoria. ");
+        printf("getRandomMove(Board * board, Piece * piece) en board.c\n");
+        exit(1);
+    }
+
     if (piece -> type == KNIGHT){
         int n = sizeof(horseMoves) / sizeof(horseMoves[0]);
         int random = rand() % n;
@@ -231,9 +239,9 @@ int* getRandomMove(Board * board, Piece * piece){
         /* Chequeamos que la casilla destino no tenga como dueño una pieza del mismo equipo */
         Piece* destination = &(board -> pieces[board ->cells[x + horseMoves[random][0]][y + horseMoves[random][1]].owner]);
         if (destination -> color == piece -> color) return NULL;
-        int validMove[2] = horseMoves[random];
-        validMove[0] += x;
-        validMove[1] += y;
+
+        validMove[0] += horseMoves[random][0] + x;
+        validMove[1] += horseMoves[random][1] + y;
         return validMove;
     }
     else if (piece -> type == KING){
@@ -244,11 +252,11 @@ int* getRandomMove(Board * board, Piece * piece){
         /* Chequeamos que la casilla destino no tenga como dueño una pieza del mismo equipo */
         Piece* destination = &(board -> pieces[board ->cells[x + kingMoves[random][0]][y + kingMoves[random][1]].owner]);
         if (destination -> color == piece -> color) return NULL;
-        int validMove[2] = kingMoves[random];
-        validMove[0] += x;
-        validMove[1] += y;
+        validMove[0] += kingMoves[random][0] + x;
+        validMove[1] += kingMoves[random][1] + y;
         return validMove;
     }
+    free(validMove);
     return NULL;
 }
 

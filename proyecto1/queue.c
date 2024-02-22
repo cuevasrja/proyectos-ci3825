@@ -15,6 +15,12 @@ Queue new_queue(){
 void enqueue(Queue * queue, void * value){
 
     Node * new_node = ( Node *)malloc(sizeof(Node));
+    /* Verificamos que malloc se ejecuta correctamente */
+    if (new_node == NULL) {
+        printf("Error al reservar memoria para el nodo. ");
+        printf("enqueue(), queue.c \n");
+        exit(1);
+    }
     Node * head_node = queue -> head;
     new_node->value = value;
     new_node->next = NULL;

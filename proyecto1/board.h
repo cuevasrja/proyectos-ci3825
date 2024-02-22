@@ -4,6 +4,13 @@
 #include "cell.h"
 #include "piece.h"
 
+/*
+Paciencia inicial de las piezas
+- 0: Caballos
+- 1: Reyes
+*/
+int initPatience[2] = {233, 70};
+
 /* Movimientos posibles del caballo */
 int horseMoves[8][2] = {
     {2, 1},

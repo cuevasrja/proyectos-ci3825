@@ -27,6 +27,12 @@ void * pthread_piece(void * struct_state){
                 sleep(1);
 
                 RequestPiece * new_request = calloc(1, sizeof(RequestPiece));
+                /* Verificamos que calloc se haya ejecutado correctamente */
+                if (new_request == NULL) {
+                    printf("Error al reservar memoria para la solicitud. ");
+                    printf("pthread_piece(), pthread_pieces_logic.c \n");
+                    exit(1);
+                }
 
                 /* La accion es movimiento */
                 new_request->action = 0;
@@ -61,6 +67,12 @@ void * pthread_piece(void * struct_state){
 
                 /* Creamos una solicitud*/
                 RequestPiece * new_request = calloc(1, sizeof(RequestPiece));
+                /* Verificamos que calloc se haya ejecutado correctamente */
+                if (new_request == NULL) {
+                    printf("Error al reservar memoria para la solicitud. ");
+                    printf("pthread_piece(), pthread_pieces_logic.c \n");
+                    exit(1);
+                }
 
                 /* La accion es pedir ser usada */
                 new_request->action = 1;
@@ -85,6 +97,12 @@ void * pthread_piece(void * struct_state){
                     el proceso principal
                 */
                 new_request = calloc(1, sizeof(RequestPiece));
+                /* Verificamos que calloc se haya ejecutado correctamente */
+                if (new_request == NULL) {
+                    printf("Error al reservar memoria para la solicitud. ");
+                    printf("pthread_piece(), pthread_pieces_logic.c \n");
+                    exit(1);
+                }
                 new_request->action = 1;
                 new_request->id_piece = state -> id;
 
@@ -104,6 +122,12 @@ void * pthread_piece(void * struct_state){
                    que el se encargue de moverla 
                 */
                 new_request = calloc(1, sizeof(RequestPiece));
+                /* Verificamos que calloc se haya ejecutado correctamente */
+                if (new_request == NULL) {
+                    printf("Error al reservar memoria para la solicitud. ");
+                    printf("pthread_piece(), pthread_pieces_logic.c \n");
+                    exit(1);
+                }
                 /* Accion: pedir que el proceso principal del juego mueva la pieza*/
                 new_request->action = 2;
                 new_request->id_piece = state -> id;

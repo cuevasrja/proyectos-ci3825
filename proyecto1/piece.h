@@ -22,13 +22,6 @@ typedef struct piece{
     int patience;
 } Piece;
 
-/*
-Paciencia inicial de las piezas
-- 0: Caballos
-- 1: Reyes
-*/
-int initPatience[2] = {233, 70};
-
 void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points, int patience);
 
 char get_piece_char(PieceType type, PieceColor color);

@@ -30,6 +30,12 @@ void * pthread_input_control_child(void * struct_info){
                 fflush(stdout);
 
                 RequestFather * new_rqt_father = calloc(1, sizeof(RequestFather));
+                /* Verificamos que calloc se ejcute correctamente */
+                if (new_rqt_father == NULL) {
+                    printf("Error al reservar memoria para la solicitud. ");
+                    printf("pthread_input_control_child(), child_process_logic.c \n");
+                    exit(1);
+                }
                 new_rqt_father->action = rqt_father.action;
                 new_rqt_father->id = rqt_father.id;
                 /* Si la accion es actualizar la paciencia ent se hace la copia */
@@ -66,6 +72,12 @@ void * pthread_input_control_father(void * struct_info){
             fflush(stdout);
 
             RequestPiece * new_rqt_child = calloc(1, sizeof(RequestPiece));
+            /* Verificamos que calloc se ejcute correctamente */
+            if (new_rqt_child == NULL) {
+                printf("Error al reservar memoria para la solicitud. ");
+                printf("pthread_input_control_father(), father_process_logic.c \n");
+                exit(1);
+            }
             new_rqt_child->action = rqt_child.action;
             new_rqt_child->id_piece = rqt_child.id_piece;
 
