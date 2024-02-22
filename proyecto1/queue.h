@@ -10,9 +10,9 @@ typedef struct Node
 
 typedef struct queue
 {
-    /* Primer elemento de la cola */
+    /* Apuntador al primer elemento de la cola */
     struct Node * head;
-
+     /* Apuntador al ultimo elemento de la cola */
     struct Node * tail;
     /* Cantidad de elementos de la cola */
     int length;
@@ -28,7 +28,6 @@ void * peek( Queue * queue);
 void dequeue( Queue * queue);
 
 void print_queue( Queue * queue);
-
 
 void free_nodes( Node * node);
 
