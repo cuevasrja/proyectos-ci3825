@@ -9,6 +9,7 @@ TEST_OBJ = piece.o cell.o board.o queue.o pthread_pieces_logic.o child_process_l
 
 main.out: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+	rm -f *.o
 
 .PHONY: clean
 
@@ -17,3 +18,4 @@ clean:
 
 test: $(TEST_OBJ)
 	$(CC) -o main_test_com_pipes.out $^ $(CFLAGS)
+	rm -f *.o
