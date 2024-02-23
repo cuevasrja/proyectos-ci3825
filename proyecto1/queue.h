@@ -27,8 +27,6 @@ void * peek( Queue * queue);
 
 void dequeue( Queue * queue);
 
-void print_queue( Queue * queue);
-
 void free_nodes( Node * node);
 
 #endif
