@@ -41,24 +41,29 @@ Board newBoard() {
 
     /* Inicializacion de los reyes de cada jugador */
     board.white_king_id = 0;
-    board.black_king_id = 1;
+    board.black_king_id = 8;
 
-    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10, getInitPatience(KING));
-    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10, getInitPatience(KING));
+    initPiece(&board.pieces[board.white_king_id], board.white_king_id, KING, WHITE, 10, getInitPatience(KING), 7, 4);
+    initPiece(&board.pieces[board.black_king_id], board.black_king_id, KING, BLACK, 10, getInitPatience(KING), 0, 4);
 
     /* Inicializacion de los caballeros de cada jugador */
 
     int i;
-    /* Los caballeros blancos comienzan en la posicion 2 y llegan hasta la pos 8*/
-    for (i = 2; i < 9; i++)
+    /* Los caballeros blancos comienzan en la posicion 1 y llegan hasta la pos 7*/
+    int r = 1;
+    for (i = 1; i < 8; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3, getInitPatience(KNIGHT));
+        if (i == 5)
+            r--;
+        
+        initPiece(&board.pieces[i], i, KNIGHT, WHITE, 3, getInitPatience(KNIGHT), 7, i - r);
     }
 
     /* Los caballeros blancos comienzan en la posicion 9 y llegan hasta la pos 15*/
+    r = 9;
     for (i = 9; i < 16; i++)
     {
-        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3, getInitPatience(KNIGHT));
+        initPiece(&board.pieces[i], i, KNIGHT, BLACK, 3, getInitPatience(KNIGHT), 0 , i - r);
     }
 
     /* Inicializacion de las celdas del tablero */
@@ -68,8 +73,9 @@ Board newBoard() {
     init_cell(&board.cells[7][4], board.white_king_id);
 
     /* Inicializacion de las celdas de los caballeros */
-    int k = 2;
+    int k = 1;
     int l = 9;
+    
     for (i = 0; i < N; i++) {
 
         /* Nos saltamos la columna donde estan los reyes */
@@ -79,8 +85,6 @@ Board newBoard() {
             l--;
             continue;
         }
-            
-
 
         /* Inicializacion de los caballeros negros */
         init_cell(&board.cells[0][i], i + l);
@@ -148,6 +152,14 @@ Board newBoard() {
 
     /* No hay ganador al principio */
     board.winner = -1;
+    /* Inicializacion del arreglo de movimientos y  del arreglo de destinos*/
+
+    for (i = 0; i < 16; i++)
+    {
+        board.pieces_in_mov[i] = -1;
+    }
+    
+    
     
     return board;
 }
@@ -373,6 +385,7 @@ void is_selection_valid(Board * board){
 
     if (cell_owner == -1)
     {
+        printf("No hay ninguna pieza en esa casilla\n");
         board->cursor.is_cell_valid = 0;
         return;
     }
@@ -382,10 +395,13 @@ void is_selection_valid(Board * board){
 
     if (color_piece == WHITE)
     {
+        printf("te pertence la pieza!");
         board->cursor.is_cell_valid = 1;
         return;
     }
 
+
+    printf("La pieza no te pertenece \n");
     board->cursor.is_cell_valid = 0;
     
 }
@@ -424,6 +440,255 @@ Funcion devuelve si es valido el movimiento de una pieza
 @param board tablero de juego
 @param valid_piece_cell arreglo de dos enteros que representan la celda de la pieza que se quiere mover
 */
+/* Devuelve -1 si salio mal. 1 si se hizo bien*/
+int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[2]){
+
+    printf("Dentro de la funcion que calcula el camino\n");
+    if (id_piece < 0 || id_piece > 15)
+    {
+        perror("error en compute_path. id de pieza invalido\n");
+        return -1;
+    }
+    
+    Piece * piece = &board->pieces[id_piece];
+    int num_steps = 0;
+
+
+    if (piece->type == KING)
+    {
+        printf("Calculando el camino del rey\n");
+        /* Centramos la pieza en su celda si la pieza no lo estaba.*/
+        if (piece->x != 2)
+        {
+            /* cuantos pasos hay que tomar para posicionarnos en el centro de la casilla*/
+            int c = 2 - piece->x;
+
+            int i, n;
+            int k = 1;
+            if (c < 0){
+                n = -1*c;
+                k = -1;
+            }         
+            /* creamos un movimiento para cada paso*/
+            for (i = 0; i < n; i++)
+            {
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+                move[0] = k;
+                move[1] = 0;
+                enqueue(&piece->moves_queue, move);
+            }  
+        }
+        if (piece->y != 2)
+        {
+            int c = 2 - piece->y;
+
+            int i, n;
+            int k = 1;
+            if (c < 0){
+                n = -1*c;
+                k = -1;
+            }         
+            for (i = 0; i < n; i++)
+            {
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    exit(1);
+                }
+                move[0] = 0;
+                move[1] = k;
+                enqueue(&piece->moves_queue, move);
+            }  
+        }
+        
+        printf("cell_target[0]: %d\n", cell_target[0]);
+        printf("cell_target[1]: %d\n", cell_target[1]);
+        printf("piece.cell_col: %d\n", piece->cell_col);
+        printf("piece.cell_row: %d\n", piece->cell_row);
+        
+        int dx = cell_target[1]*M  - piece->cell_col*M;
+        int dy = cell_target[0]*M  - piece->cell_row*M;
+
+        if (dy < 0)
+            dy = -1*dy;
+        if (dx < 0)
+            dx = -1*dx;
+        
+        printf("dx: %d dy: %d \n", dx, dy);
+
+
+        while(dx > 0 || dy > 0){
+            int * move = calloc(2, sizeof(int));
+            if (move == NULL) {
+                printf("Error al reservar memoria para el movimiento.\n ");
+                exit(1);
+            }
+            // Hay que revisar si esto funciona
+            move[0] = -1*move_type[0];
+            move[1] = -1*move_type[1];
+            printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
+            enqueue(&piece->moves_queue, move);
+            printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+
+            if (dx > 0)
+                dx--;
+
+            if (dy > 0)
+            dy--;
+        }
+        
+    }
+    else if (piece->type == KNIGHT)
+    {
+        /* Centramos la pieza*/
+        if (piece->x != 2)
+        {
+            int c = 2 - piece->x;
+            int i, n;
+            int k = 1;
+            if (c < 0){
+                n = -1*c;
+                k = -1;
+            }         
+            /* creamos un movimiento para cada paso*/
+            for (i = 0; i < n; i++)
+            {
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+                move[0] = k;
+                move[1] = 0;
+                enqueue(&piece->moves_queue, move);
+            }  
+        }
+        if (piece->y != 2)
+        {
+            int c = 2 - piece->y;
+
+            int i, n;
+            int k = 1;
+            if (c < 0){
+                n = -1*c;
+                k = -1;
+            }         
+            for (i = 0; i < n; i++)
+            {
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    exit(1);
+                }
+                move[0] = 0;
+                move[1] = k;
+                enqueue(&piece->moves_queue, move);
+            }  
+        }
+
+        int dx = cell_target[1]*M  - piece->cell_col*M;
+        int dy = cell_target[0]*M  - piece->cell_row*M;
+
+        if (dy < 0)
+        {
+            dy  *= -1;
+        }
+
+        if (dx < 0)
+        {
+            dx  *= -1;
+        }      
+
+        /* Asumiendo que el primer elemento es en las filas y el segundo en las columnas*/
+        if (move_type[0] > move_type[1])
+        {
+
+            /* Primero realizamos el movimiento vertical*/
+            while(dy > 0){
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+
+                move[0] = -1*move_type[0]/2;
+                move[1] = 0;
+                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
+                enqueue(&piece->moves_queue, move);
+                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+                dy--;
+            }
+
+            /* Ahora el horizontal */
+            while(dx > 0){
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+                // Hay que revisar si esto funciona
+                move[0] = 0;
+                move[1] = -1*move_type[1];
+                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
+                enqueue(&piece->moves_queue, move);
+                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+                dx--;
+            }
+        } 
+        else if (move_type[0] < move_type[1])
+        {
+
+            /* Primero realizamos el movimiento hor*/
+            while(dx > 0){
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+                // Hay que revisar si esto funciona
+                move[0] = 0;
+                move[1] = -1*move_type[1]/2;
+                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
+                enqueue(&piece->moves_queue, move);
+                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+                dx--;
+            }
+
+            /* Ahora el ver */
+            while(dy > 0){
+                int * move = calloc(2, sizeof(int));
+                if (move == NULL) {
+                    printf("Error al reservar memoria para el movimiento.\n ");
+                    return -1;
+                }
+                // Hay que revisar si esto funciona
+                move[0] = -1*move_type[0];
+                move[1] = 0;
+                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
+                enqueue(&piece->moves_queue, move);
+                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+                dy--;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+
+    }
+    else
+    {
+        perror("error en compute_path. Tipo de pieza invalido \n");
+        return -1;
+    }
+    
+    return 1;
+}
+
 int is_play_valid(Board * board, int valid_piece_cell[2]){
 
     int is_valid = 1;
@@ -462,9 +727,51 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
     Piece* piece = &(board->pieces[piece_select]);
     PieceType type_piece = board->pieces[piece_select].type;
 
-    printf("Pieza escogida: %d \n", type_piece);
+    printf("Tipo de pieza escogida: %d \n", type_piece);
         
-    move_valid = isValidMove(board, piece, valid_piece_cell[0], valid_piece_cell[1]);
+    int i, j, k;
+    /* Si es un rey */
+    if (type_piece == 1)
+    {              
+        for (i = 0; i < 8; i++)
+        {
+
+                j = board_row + kingMoves[i][0];
+                k = board_col + kingMoves[i][1];
+                printf("j: %d, k: %d, rc: %d, cc: %d \n", j, k, valid_piece_cell[0], valid_piece_cell[1]);
+                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
+                {
+                    continue;
+                }
+                printf("Se va a computar el camino a tomar para el rey\n");
+                move_valid = 1;
+                /* Si el movimiento era valido, hay que calcular su trayectoria */
+                int target[2] = {board_row, board_col};
+                printf("board row del target %d. board col del target: %d \n", board_row, board_col);
+                compute_path(board, piece_select, target, kingMoves[i]);
+                break;
+
+        }
+    } 
+    else
+    {
+        for (i = 0; i < 8; i++)
+        {
+                j = board_row + horseMoves[i][0];
+                k = board_col + horseMoves[i][1];
+                if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
+                {
+                    continue;
+                }
+                move_valid = 1;
+                printf("Se va a computar el camino a toma\nr");
+                /* Si el movimiento era valido, hay que calcular su trayectoria */
+                int target[2] = {board_row, board_col};
+                compute_path(board, piece_select, target, horseMoves[i]);
+                break;
+
+        }
+    }
 
     if (board_row == valid_piece_cell[0] && board_col == valid_piece_cell[1])
     {
@@ -479,6 +786,125 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
 
     return is_valid;
     
+}
+
+/* Devuelve 1 si se movio de forma correcta la pieza, 0 si hay que hacer que la pieza espere
+un segundo para moverse*/
+int move_char_piece(Board * board, int id_piece){
+
+    printf("move_char_piece id: %d \n", id_piece);
+    if (id_piece < 0 || id_piece > 15)
+    {
+        perror("error move_char_piece. id de la pieza invalido\n");
+        exit(1);
+    }
+ 
+    Piece * piece = &board->pieces[id_piece];
+    int * move_ref;
+    int move[2];
+    if (piece->moves_queue.length > 0)
+    {
+        move_ref = peek(&piece->moves_queue);
+        move[0] = move_ref[0];
+        move[1] = move_ref[1];
+    } else
+    {
+        perror("error move_char_piece. Cola de movimientos vacia\n");
+        return -1;
+    }
+
+    int move_success;
+
+    move_success = move_piece(board, id_piece, move[1], move[0]);
+
+    if (move_success != 0)
+    {
+        dequeue(&piece->moves_queue);
+        free(move_ref);
+    }
+
+    /* Si se realizo el ultimo movimiento, actualizamos el dueño*/
+    if (move_success != 0 && piece->moves_queue.length == 0 )
+    {
+        board->cells[piece->cell_row][piece->cell_col].owner = piece->id;
+    }
+    
+    
+    return move_success;
+
+}
+
+/* -1 si dio error. 0 si la pieza necesita descansar otro segundo. 1 si el movimiento se hizo*/
+int move_piece(Board * board, int id_piece, int des_x, int des_y){
+
+    printf("move_piece: Recibi un movimiento \n");
+    fflush(stdout);
+
+    if (id_piece < 0 || id_piece > 15)
+    {
+        perror("id invalido. move_piece");
+        return -1;
+    }
+    
+    Piece * piece = &board->pieces[id_piece];
+    int new_board_row;
+    int new_board_col;
+    int new_cell_row;
+    int new_cell_col;
+
+    /* Asumiendo que y son las filas y x son las columnas*/
+    int abs_row = piece->cell_row*M + piece->y + des_y;
+    int abs_col = piece->cell_col*M + piece->x + des_x;
+
+    if (abs_row < 0 || abs_col < 0 || abs_row >= N*M || abs_col >= N*M)
+    {
+        return -1;
+    }
+    
+    new_board_row = abs_row/M;
+
+    if (des_y >= 0)
+    {
+        new_cell_row = (piece->y + des_y)%M;
+    } 
+    else
+    {
+        new_cell_row = (-1*des_y)%M;
+        new_cell_row = M - new_cell_row;
+        new_cell_row = (piece->y + new_cell_row)%M;
+    }
+
+    new_board_col = abs_col/M;
+
+    if (des_x >= 0)
+    {
+        new_cell_col = (piece->x + des_x)%M;
+    } 
+    else
+    {
+        new_cell_col = (-1*des_x)%M;
+        new_cell_col = M - new_cell_col;
+        new_cell_col = (piece->x + new_cell_col)%M;
+    }
+
+    /*Revisamos si esa posicion no tiene una pieza */
+    if (board->cells[new_board_row][new_board_col].matrix[new_cell_row][new_cell_col] != -1)
+    {
+        /* La pieza necesita descansar un segundo mas */
+        return 0;
+    }
+     
+    /* Actualizamos los datos de la pieza y de las celdas */
+    board->cells[piece->cell_row][piece->cell_col].matrix[piece->y][piece->x] = -1;
+
+    piece->x = new_cell_col;
+    piece->y = new_cell_row;
+    piece->cell_row = new_board_row;
+    piece->cell_col = new_board_col;
+
+    board->cells[piece->cell_row][piece->cell_col].matrix[piece->y][piece->x] = piece->id;
+    
+    return 1;
 }
 
 /*
@@ -527,7 +953,6 @@ int* getRandomMove(Board * board, Piece * piece){
     free(validMove);
     return NULL;
 }
-
 
 /*
 Función que retorna la distancia de manhattan entre dos puntos

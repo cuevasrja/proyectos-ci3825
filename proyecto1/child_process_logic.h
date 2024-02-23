@@ -26,11 +26,12 @@ typedef struct input_utils {
     Queue * to_do;
 } InputUtils;
 
-int can_read_from_pipe(int fd_c);
-
 void * pthread_input_control_child(void * struct_info);
 
+void * pthread_input_control_father(void * struct_info);
+
 void usr_child_code(int child_request[2], int father_request[2]);
+
 
 
 #endif

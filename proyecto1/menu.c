@@ -1,6 +1,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <ctype.h>
+# include <signal.h>
 # include "menu.h"
 
 char* menu[] = {
@@ -28,11 +29,12 @@ Esta función verifica si el usuario quiere salir
 @param options: las opciones que el usuario ingresó
 @return 1 si el usuario quiere salir, 0 si no
 */
-int willExit(char options[INPUT]) {
+int willExit(char options[INPUT], int id_process_child) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
         if (tolower(options[i]) == 'q'){
-            return 1;
+            kill(id_process_child, SIGKILL); 
+            exit(0);
         }
     }
     return 0;

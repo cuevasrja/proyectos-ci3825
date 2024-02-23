@@ -34,6 +34,8 @@ int main() {
         dup(father_request_fd[0]);
 
         usr_child_code(child_request_fd, father_request_fd);
+
+        return 0;
     }
     
     /* De aqui para abajo solo hay codigo del padre */
@@ -52,18 +54,19 @@ int main() {
     /* Una variable temporal solo para enviar una vez las soliciutdes de prueba*/
     int send_request = 1;
 
-    /* Creamos el hilo de este proceso que lee*/
+    /* Creamos el hilo del padre que lee*/
     pthread_t pthread_input;
     pthread_mutex_t sem_to_do_father;
     pthread_mutex_init(&sem_to_do_father, NULL);
 
+    /* Informacion para que el hilo pueda comunicar lo que obtenga*/
     InputUtils info_input_control;
     info_input_control.read_fd = child_request_fd[0];
     info_input_control.sem = &sem_to_do_father;
     info_input_control.to_do = &to_do_queue_father;
     int rslt_cr_p;
 
-    rslt_cr_p = pthread_create(&pthread_input, NULL, pthread_input_control_child, (void *)&info_input_control);
+    rslt_cr_p = pthread_create(&pthread_input, NULL, pthread_input_control_father, (void *)&info_input_control);
     if (rslt_cr_p != 0)
     {
         perror("No se logro crear el hilo que controla el input del padre");
@@ -125,7 +128,6 @@ int main() {
             printf("PADRE: lo que recibi de mi hijo: %d, id: %d \n", r->action, r->id_piece);
             fflush(stdout);
 
-            read(child_request_fd[0], r, sizeof(RequestPiece));
             dequeue(&to_do_queue_father);
             free(r);
             

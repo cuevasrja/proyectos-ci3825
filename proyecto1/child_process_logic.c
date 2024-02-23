@@ -1,20 +1,5 @@
 # include "child_process_logic.h"
 
-int can_read_from_pipe(int fd_c){
-    struct pollfd fds = { .fd = fd_c, .events = POLLIN };
-    int res = poll(&fds, 1, 0);
-
-    //if res < 0 then an error occurred with poll
-    //POLLERR is set for some other errors
-    //POLLNVAL is set if the pipe is closed
-    if(res < 0||fds.revents&(POLLERR|POLLNVAL))
-    {
-        //an error occurred, check errno
-        perror("error en el pipe");
-    }
-    return fds.revents&POLLIN;
-}
-
 void * pthread_input_control_child(void * struct_info){
 
     InputUtils * info = (InputUtils *)struct_info;
@@ -22,10 +7,8 @@ void * pthread_input_control_child(void * struct_info){
 
     while (1 == 1)
     {
-        if (can_read_from_pipe(info->read_fd) == 1){
-
-            if (read(info->read_fd, &rqt_father, sizeof(RequestFather)) != 0)
-            {
+        if (read(info->read_fd, &rqt_father, sizeof(RequestFather)) != 0)
+        {
                 printf("Request del padre obtenido!\n");
                 fflush(stdout);
 
@@ -51,8 +34,7 @@ void * pthread_input_control_child(void * struct_info){
                 pthread_mutex_lock(info->sem);
                 enqueue(info->to_do, new_rqt_father);
                 pthread_mutex_unlock(info->sem);
-            }        
-        }
+        }        
     }
 }
 
@@ -64,10 +46,8 @@ void * pthread_input_control_father(void * struct_info){
 
     while (1 == 1)
     {
-        if (can_read_from_pipe(info->read_fd) == 1){
-
-            read(info->read_fd, &rqt_child, sizeof(RequestPiece));
-
+        if (read(info->read_fd, &rqt_child, sizeof(RequestPiece)) != 0)
+        {
             printf("Request del hijo obtenido!\n");
             fflush(stdout);
 
@@ -119,10 +99,10 @@ void usr_child_code(int child_request[2], int father_request[2] ){
     /* Inicialiazcion de los structs de los caballos */
     for (i = 1; i < num_pieces; i++)
     {
-        p_pthreads_states[i].id = i + 1;
-        p_pthreads_states[i].patience = 100; ///
+        p_pthreads_states[i].id = i;
+        p_pthreads_states[i].patience = 1000; ///
         p_pthreads_states[i].in_movement = 0;
-        p_pthreads_states[i].steps = 3;
+        p_pthreads_states[i].steps = 15;
         p_pthreads_states[i].is_alive = 1;
         p_pthreads_states[i].sem = &sem_request_piece;
         p_pthreads_states[i].request_queue = &request_queue;
@@ -138,7 +118,7 @@ void usr_child_code(int child_request[2], int father_request[2] ){
         rslt_cr_p =  pthread_create(&p_pthreads_t[i],NULL, pthread_piece, (void *)&p_pthreads_states[i]);
         if (rslt_cr_p != 0)
         {
-            perror("Ocurrio un error al crear el hilo\n");
+            perror("Ocurrio un error al crear el hilo \n");
             exit(1);
         }
         
@@ -162,9 +142,10 @@ void usr_child_code(int child_request[2], int father_request[2] ){
     RequestFather rqt_father;
     while (1 == 1)
     {
-        printf("HIJO: en el while \n");
-        fflush(stdout);
+        // printf("HIJO: en el while \n");
+        // fflush(stdout);
 
+        pthread_mutex_lock(&sem_to_do);
         if (queue_to_do.length > 0)
         {
             RequestFather * r = (RequestFather *)peek(&queue_to_do);
@@ -251,7 +232,8 @@ void usr_child_code(int child_request[2], int father_request[2] ){
             dequeue(&queue_to_do);
             free(r);
         }
- 
+        pthread_mutex_unlock(&sem_to_do);
+
         sleep(1);
 
         pthread_mutex_lock(&sem_request_piece);

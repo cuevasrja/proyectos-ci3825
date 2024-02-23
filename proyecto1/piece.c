@@ -41,7 +41,7 @@ Constructor de la estructura Piece
 @param points Valor de la pieza
 @param patience Paciencia de la pieza (en segundos)
 */
-void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points, int patience) {
+void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points, int patience, int cell_row, int cell_col) {
 
     piece -> id = id;
     piece -> type = type;
@@ -49,7 +49,10 @@ void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int poin
     piece -> points = points;
     piece -> x = 2;
     piece -> y = 2;
+    piece -> cell_row = cell_row;
+    piece -> cell_col = cell_col;
     piece -> inMovement = 0;
+    piece -> moves_queue = new_queue();
     piece -> patience = patience;
 }
 
@@ -96,3 +99,5 @@ void setPosition(Piece * piece, int x, int y) {
 void setPatience(Piece * piece, int patience) {
     piece->patience = patience;
 }
+
+

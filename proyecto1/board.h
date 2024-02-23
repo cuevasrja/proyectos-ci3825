@@ -30,11 +30,18 @@ typedef struct board {
     Cell cells[8][8];
     /* Matriz de chars usada para imprimir */
     char char_cells[33][33];
+    /* Arreglo que muestra las piezas en movimiento.
+    -1 si la pieza no se mueve
+    0  si la pieza se mueve por una orden del jugador
+    1  si la pieza se mueve porque perdio la paciencia*/
+    int pieces_in_mov[16];
     /* id de los reyes para acceder facilmente*/
     int black_king_id;
     int white_king_id;
+    /* Atributo que nos indica de quien es el turno en el juego */
     Turn turn;
     int winner;
+    /*  */
     Cursor cursor;
 } Board;
 
@@ -57,6 +64,10 @@ void is_selection_valid(Board * board);
 int isValidMove(Board * board, Piece * piece, int x, int y);
 
 int is_play_valid(Board * board, int valid_piece_cell[2]);
+
+int move_char_piece(Board * board, int id_piece);
+
+int move_piece(Board * board, int id_piece, int des_x, int des_y);
 
 void printBoard(Board* board);
 

@@ -9,8 +9,8 @@ void * pthread_piece(void * struct_state){
     pPthreadState * state = (pPthreadState *)struct_state;
     signal(SIGUSR1, pthread_piece_handler);
 
-    printf("HILO: Se creo el hilo de id %d \n", state->id);
-    fflush(stdout);
+    // printf("HILO: Se creo el hilo de id %d \n", state->id);
+    // fflush(stdout);
 
     while (state->is_alive == 1)
     {
