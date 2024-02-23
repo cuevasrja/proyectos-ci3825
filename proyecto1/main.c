@@ -115,13 +115,14 @@ void send_request_to_child(Board * board, int father_request_fd, int action, int
         
         for(i = 0; i < 8; i++){
             Piece * piece_act = &board->pieces[i + x];
-            updatePatience(board, piece_act);
+            new_request.patience_act[i] = piece_act->patience;
         }
     }
     
     write(father_request_fd, &new_request, sizeof(RequestFather));
 
 }
+
 
 int main() {
 
@@ -135,8 +136,8 @@ int main() {
     pipe(father_request_fd);
 
     /* creamos el proceso hijo que representa al usuario */
-    pid_t id_process = fork();
-    if (id_process == 0)
+    pid_t id_process_user = fork();
+    if (id_process_user == 0)
     {
         // el hijo escribe por child_request
         close(child_request_fd[0]);
@@ -161,6 +162,10 @@ int main() {
     /* el padre solo escribe en father_request */
     close(father_request_fd[0]);
     dup(father_request_fd[1]);
+
+    /* La primera solicitud que le haremos a los procesos sera 
+    actualizar la paciencia de sus piezas*/
+    send_request_to_child(&board, father_request_fd[1], 3, -1);    
 
     /* En esta cola van las solicitudes del proceso user hijo al padre*/
     Queue to_do_queue_father = new_queue();
@@ -212,7 +217,7 @@ int main() {
         printBoard(&board);
         showMenu();
         enterOptions(options);
-        if (willExit(options, id_process)){ /* Si el usuario quiere salir, salimos */
+        if (willExit(options, id_process_user)){ /* Si el usuario quiere salir, salimos */
             printf("Saliendo...\n");
             break;
         }
@@ -237,7 +242,6 @@ int main() {
                     cursor_position[0] +=1;
                     break;
                 case 'x': /* Seleccionar pieza */
-                    printf("Seleccionar pieza\n");
                     /* Si llegamos hasta aca, significa que ya tenemos 
                     la futura casilla del cursor en cursor position.
                     volvemos i == INPUT para salir del while */
@@ -246,23 +250,25 @@ int main() {
                      entonces toca revisar si la nueva accion es una jugada valida*/
                     if (board.cursor.is_cell_valid == 1){
                         check_play = 1;
+                        printf("Seleccionar casilla de destino\n");
+
                     } 
                     else
                     {
                         /* Si el cursor estaba en +, procedemos a ver si es una seleccion
                         correcta */
                         check_selection = 1;
+                        printf("Seleccionar pieza\n");
                     }
                     
                     i = INPUT;
 
                     break;
-                // default: /* Opción inválida */
-                // case 'q': // Exit
-                //     printf("Salir\n");
-                //     willExit(options, id_process);
-                //     break;
-                default: // Invalid option
+                case 'q': // Exit
+                    printf("Salir\n");
+                    willExit(options, id_process_user);
+                    break;
+                default: 
                     printf("Opción inválida\n");
                     break;
             }
@@ -320,7 +326,7 @@ int main() {
         result_to_do = handleChildRequests(&board, &sem_to_do_father, &to_do_queue_father);
         if (result_to_do == -1)
         {
-            willExit(options, id_process);
+            willExit(options, id_process_user);
         }
 
         

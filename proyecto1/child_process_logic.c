@@ -22,7 +22,7 @@ void * pthread_input_control_child(void * struct_info){
                 new_rqt_father->action = rqt_father.action;
                 new_rqt_father->id = rqt_father.id;
                 /* Si la accion es actualizar la paciencia ent se hace la copia */
-                if (rqt_father.action == 4)
+                if (rqt_father.action == 3)
                 {
                     int i;
                     for (i = 0; i < 8; i++)
@@ -88,7 +88,7 @@ void usr_child_code(int child_request[2], int father_request[2] ){
 
     /* INicializacion del struct del rey */
     p_pthreads_states[0].id = 0;
-    p_pthreads_states[0].patience = 1000; //
+    p_pthreads_states[0].patience = 1000; 
     p_pthreads_states[0].in_movement = 0;
     p_pthreads_states[0].steps = 5;
     p_pthreads_states[0].is_alive = 1;
@@ -100,7 +100,7 @@ void usr_child_code(int child_request[2], int father_request[2] ){
     for (i = 1; i < num_pieces; i++)
     {
         p_pthreads_states[i].id = i;
-        p_pthreads_states[i].patience = 1000; ///
+        p_pthreads_states[i].patience = 1000; 
         p_pthreads_states[i].in_movement = 0;
         p_pthreads_states[i].steps = 15;
         p_pthreads_states[i].is_alive = 1;
@@ -172,8 +172,6 @@ void usr_child_code(int child_request[2], int father_request[2] ){
                 pthread_kill(p_pthreads_t[r->id], SIGUSR1);
                 pthread_join(p_pthreads_t[r->id], NULL); 
 
-                // /* Hay que avisar que se elimino el hilo? */
-
                 break;
             
             case 1:
@@ -214,8 +212,7 @@ void usr_child_code(int child_request[2], int father_request[2] ){
                 int j;
                 for (j = 0; j < 8; j++)
                 {
-                    printf("j: %d; p: %d \n", j, r->patience_act[j]);
-                    /* Dudoso */
+                    // printf("j: %d; p: %d \n", j, r->patience_act[j]);
                     p_pthreads_states[j].patience = r->patience_act[j];
                     fflush(stdout);
                 }
@@ -223,7 +220,7 @@ void usr_child_code(int child_request[2], int father_request[2] ){
                 break;
             
             default:
-                printf("No se entendio la accion \n");
+                printf("HIJO: No se entendio la accion \n");
                 break;
             }
 
