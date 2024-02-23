@@ -1,17 +1,19 @@
-C = gcc
-SOURCE = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c menu.h menu.c main.c
-TESTS = piece.h piece.c cell.h cell.c board.h board.c queue.c pthread_pieces_logic.c child_process_logic.c main_test_com_pipes.c
-TARGET = main.out
-FLAGS = -pthread
+CC=gcc
+CFLAGS=-I. -pthread
+DEPS = piece.h cell.h board.h queue.h pthread_pieces_logic.h child_process_logic.h menu.h
+OBJ = piece.o cell.o board.o queue.o pthread_pieces_logic.o child_process_logic.o menu.o main.o
+TEST_OBJ = piece.o cell.o board.o queue.o pthread_pieces_logic.o child_process_logic.o menu.o main_test_com_pipes.o 
 
-# Cada vez que se ejecute make, se compilará el código fuente
-all: $(SOURCE)
-	$(C) $(SOURCE) -o $(TARGET) $(FLAGS)
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-# Cada vez que se ejecute make test, se compilará el código fuente de los tests
-test: $(TESTS)
-	$(C) $(TESTS) -o test.out $(FLAGS)
+main.out: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
 
-# Cada vez que se ejecute make clean, se eliminará el archivo ejecutable
+.PHONY: clean
+
 clean:
-	rm -f *.out
+	rm -f *.o *.out
+
+test: $(TEST_OBJ)
+	$(CC) -o main_test_com_pipes.out $^ $(CFLAGS)
