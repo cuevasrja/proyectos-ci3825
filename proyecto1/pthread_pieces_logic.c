@@ -1,16 +1,14 @@
 #include "pthread_pieces_logic.h"
 
 void pthread_piece_handler(int signal){
-    printf("Ha ocurrido una interrupcion de un hilo \n");
+    /*No se necesita que esta funcion haga algo, solo que interrumpa el hilo*/
+    /*printf("Ha ocurrido una interrupcion de un hilo \n");*/
 }
 
 void * pthread_piece(void * struct_state){
 
     pPthreadState * state = (pPthreadState *)struct_state;
     signal(SIGUSR1, pthread_piece_handler);
-
-    // printf("HILO: Se creo el hilo de id %d. Su paciencia es de %d \n", state->id, state->patience);
-    // fflush(stdout);
 
     while (state->is_alive == 1)
     {
@@ -22,9 +20,6 @@ void * pthread_piece(void * struct_state){
             while (num_steps > 0 && state->in_movement && state->is_alive)
             {
                 /* Avisar al padre de este hilo que la pieza se debe mover */
-                printf("HILO: se esta moviendo la pieza \n");
-                fflush(stdout);
-                sleep(1);
 
                 RequestPiece * new_request = calloc(1, sizeof(RequestPiece));
                 /* Verificamos que calloc se haya ejecutado correctamente */
@@ -45,6 +40,8 @@ void * pthread_piece(void * struct_state){
                 enqueue(state -> request_queue, new_request);
                 pthread_mutex_unlock(state -> sem);
                 num_steps--;
+
+                sleep(1);
             }
 
             /* Actualizar el estado para dejar de moverse */
@@ -142,5 +139,5 @@ void * pthread_piece(void * struct_state){
         }
     }
 
-    printf("HILO %d: he muerto \n", state->id);
 }
+

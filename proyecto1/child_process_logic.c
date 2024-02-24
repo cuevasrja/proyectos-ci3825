@@ -9,9 +9,6 @@ void * pthread_input_control_child(void * struct_info){
     {
         if (read(info->read_fd, &rqt_father, sizeof(RequestFather)) != 0)
         {
-                printf("Request del padre obtenido!\n");
-                fflush(stdout);
-
                 RequestFather * new_rqt_father = calloc(1, sizeof(RequestFather));
                 /* Verificamos que calloc se ejcute correctamente */
                 if (new_rqt_father == NULL) {
@@ -47,8 +44,6 @@ void * pthread_input_control_father(void * struct_info){
     {
         if (read(info->read_fd, &rqt_child, sizeof(RequestPiece)) != 0)
         {
-            printf("Request del hijo obtenido!\n");
-            fflush(stdout);
 
             RequestPiece * new_rqt_child = calloc(1, sizeof(RequestPiece));
             /* Verificamos que calloc se ejcute correctamente */
@@ -123,8 +118,6 @@ void usr_child_code(int child_request[2], int father_request[2] ){
         
     }
 
-    sleep(5);
-
     /* Creacion del hilo que controla el input. 
     Este hilo se usa para que el proceso principal no se bloquee */
     pthread_t pthread_input;
@@ -141,15 +134,11 @@ void usr_child_code(int child_request[2], int father_request[2] ){
     RequestFather rqt_father;
     while (1 == 1)
     {
-        // printf("HIJO: en el while \n");
-        // fflush(stdout);
 
         pthread_mutex_lock(&sem_to_do);
         if (queue_to_do.length > 0)
         {
             RequestFather * r = (RequestFather *)peek(&queue_to_do);
-            printf("HIJO: act: %d, id: %d \n", r->action, r->id);
-            fflush(stdout);
             
             switch (r->action)
             {
@@ -230,15 +219,10 @@ void usr_child_code(int child_request[2], int father_request[2] ){
         }
         pthread_mutex_unlock(&sem_to_do);
 
-        sleep(1);
-
         pthread_mutex_lock(&sem_request_piece);
         if (request_queue.length > 0)
         {
             RequestPiece * r = (RequestPiece *)peek(&request_queue);
-
-            // printf("HIJO: lo que enviare al padre_ act: %d, id: %d \n", r->action, r->id_piece);
-            // fflush(stdout);
 
             write(child_request[1], r, sizeof(RequestPiece));
             dequeue(&request_queue);
@@ -251,3 +235,103 @@ void usr_child_code(int child_request[2], int father_request[2] ){
     return;
 }
 
+int handleChildRequests(Board * board, pthread_mutex_t * sem_to_do_father, Queue * to_do_queue_father){
+
+    RequestPiece  new_r;
+    int num_request = 0;
+
+    pthread_mutex_lock(sem_to_do_father);
+    num_request = to_do_queue_father->length;
+    pthread_mutex_unlock(sem_to_do_father);
+
+    while (num_request > 0)
+    {
+        pthread_mutex_lock(sem_to_do_father);
+
+        RequestPiece * r = (RequestPiece *)peek(to_do_queue_father);
+        new_r.action = r->action;
+        new_r.id_piece = r->id_piece;
+        
+        dequeue(to_do_queue_father);
+        free(r);
+
+        pthread_mutex_unlock(sem_to_do_father);
+
+        /* Tomamos la accion que corresponde a la solicitud */
+        switch (new_r.action)
+        {
+            /*Una pieza solicita moverse un caracter*/
+        case 0:
+            int result;
+            result = move_char_piece(board, new_r.id_piece);
+            if (result == -1)
+            {
+                perror("ha ourrido algo al mover la pieza");
+                return -1;
+            }
+            if (result == 0)
+            {
+                /* Hay que pedirle a la pieza que espere un segundo mas */
+            }
+            if (result == 1)
+            {
+                printBoard(board);
+            }
+            if (board->pieces[new_r.id_piece].moves_queue.length == 0)
+            {
+                printf("Se comenzaran a contar 20 segundos antes de pasarle el turno a la IA!\n");
+            }
+              
+            break;
+        
+        case 1:
+            /* La pieza nos avisa que ha perdido la paciencia */
+            Piece * piece =  &board->pieces[new_r.id_piece];
+            int bf = piece->cell_row;
+            int bc = piece->cell_col;
+
+            /*Aqui se deberia revisar si la pieza se puede comer a alguien o si solo quiere
+            ser usada*/
+            printf("La pieza de la celda (fila: %d, col: %d) ha perdido la paciencia", bf, bc);
+            break;
+        case 2:
+            /* La pieza reclamo dos veces haber perdido la paciencia y ahora
+            le pide al proceso principal que la mueva */
+            /*Hay que calcular si hay un enemigo cerca para comerse. De ser el caso 
+            movemos la pieza a esa celda*/
+
+            /* Si no habia un enemigo para comerse, se escoge al azar un movimiento */
+
+            printf("La pieza de la celda (fila: %d, col: %d) ha comenzado a moverse sola", bf, bc);
+            break;
+        default:
+            printf("No se reconocio la action pedida por la pieza\n");
+            break;
+        }
+        num_request--;
+    }
+
+}
+
+void send_request_to_child(Board * board, int father_request_fd, int action, int piece_id){
+
+    RequestFather new_request;
+    new_request.action = action;
+    new_request.id = piece_id;
+
+    if (action == 3)
+    {
+        int i;
+        int x = 0;
+        /////////////
+        if (board->turn == IA)
+            x = 8;
+        
+        for(i = 0; i < 8; i++){
+            Piece * piece_act = &board->pieces[i + x];
+            new_request.patience_act[i] = piece_act->patience;
+        }
+    }
+    
+    write(father_request_fd, &new_request, sizeof(RequestFather));
+}

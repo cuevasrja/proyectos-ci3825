@@ -10,12 +10,9 @@
 # include <unistd.h>
 
 # include "queue.h"
+# include "board.h"
 
-/* No se si este struct se vaya a usar al final */
-typedef struct pPthreadsControl{
-    int pieces_in_movement[16];
-} PPthreadsControl;
-
+/* Struc para representar el estado de cada hilo que representa una pieza*/
 typedef struct pPthreadState {
     int id;
     int patience;
@@ -24,7 +21,6 @@ typedef struct pPthreadState {
     int is_alive;
     pthread_mutex_t * sem;
     Queue * request_queue;
-    PPthreadsControl * main_pthreads_control;
 } pPthreadState;
 
 typedef struct request_piece

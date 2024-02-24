@@ -149,6 +149,9 @@ Board newBoard() {
     /* El juego comienza con el turno del usuario */
     board.turn = USER;
 
+    /* No se hizo ningun movimiento aun */
+    board.move_request = 0;
+
     /* No hay ganador al principio */
     board.winner = -1;
     /* Inicializacion del arreglo de movimientos y  del arreglo de destinos*/
@@ -360,7 +363,6 @@ void is_selection_valid(Board * board){
     }
 
 
-    printf("La pieza no te pertenece \n");
     board->cursor.is_cell_valid = 0;
     
 }
@@ -388,7 +390,6 @@ int isValidMove(Board * board, Piece * piece, int x, int y){
 
 int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[2]){
 
-    printf("Dentro de la funcion que calcula el camino\n");
     if (id_piece < 0 || id_piece > 15)
     {
         perror("error en compute_path. id de pieza invalido\n");
@@ -401,7 +402,6 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
 
     if (piece->type == KING)
     {
-        printf("Calculando el camino del rey\n");
         /* Centramos la pieza en su celda si la pieza no lo estaba.*/
         if (piece->x != 2)
         {
@@ -450,11 +450,6 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
             }  
         }
         
-        printf("cell_target[0]: %d\n", cell_target[0]);
-        printf("cell_target[1]: %d\n", cell_target[1]);
-        printf("piece.cell_col: %d\n", piece->cell_col);
-        printf("piece.cell_row: %d\n", piece->cell_row);
-        
         int dx = cell_target[1]*M  - piece->cell_col*M;
         int dy = cell_target[0]*M  - piece->cell_row*M;
 
@@ -462,22 +457,17 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
             dy = -1*dy;
         if (dx < 0)
             dx = -1*dx;
-        
-        printf("dx: %d dy: %d \n", dx, dy);
-
+    
 
         while(dx > 0 || dy > 0){
             int * move = calloc(2, sizeof(int));
             if (move == NULL) {
-                printf("Error al reservar memoria para el movimiento.\n ");
                 exit(1);
             }
             // Hay que revisar si esto funciona
             move[0] = -1*move_type[0];
             move[1] = -1*move_type[1];
-            printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
             enqueue(&piece->moves_queue, move);
-            printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
 
             if (dx > 0)
                 dx--;
@@ -562,9 +552,7 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
 
                 move[0] = -1*move_type[0]/2;
                 move[1] = 0;
-                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
                 enqueue(&piece->moves_queue, move);
-                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
                 dy--;
             }
 
@@ -578,9 +566,7 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
                 // Hay que revisar si esto funciona
                 move[0] = 0;
                 move[1] = -1*move_type[1];
-                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
                 enqueue(&piece->moves_queue, move);
-                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
                 dx--;
             }
         } 
@@ -597,9 +583,7 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
                 // Hay que revisar si esto funciona
                 move[0] = 0;
                 move[1] = -1*move_type[1]/2;
-                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
-                enqueue(&piece->moves_queue, move);
-                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
+                enqueue(&piece->moves_queue, move);                
                 dx--;
             }
 
@@ -613,9 +597,7 @@ int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[
                 // Hay que revisar si esto funciona
                 move[0] = -1*move_type[0];
                 move[1] = 0;
-                printf("compute_path. move[0]: %d move[1]: %d \n", move[0], move[1]);
                 enqueue(&piece->moves_queue, move);
-                printf("Cantidad de elementos en la cola %d \n", piece->moves_queue.length);
                 dy--;
             }
         }
@@ -671,8 +653,6 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
     int piece_select = board->cells[valid_piece_cell[0]][valid_piece_cell[1]].owner;
     Piece* piece = &(board->pieces[piece_select]);
     PieceType type_piece = board->pieces[piece_select].type;
-
-    printf("Tipo de pieza escogida: %d \n", type_piece);
         
     int i, j, k;
     /* Si es un rey */
@@ -687,12 +667,9 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
                 if (j != valid_piece_cell[0] || k != valid_piece_cell[1])
                 {
                     continue;
-                }
-                printf("Se va a computar el camino a tomar para el rey\n");
-                move_valid = 1;
+                }                move_valid = 1;
                 /* Si el movimiento era valido, hay que calcular su trayectoria */
                 int target[2] = {board_row, board_col};
-                printf("board row del target %d. board col del target: %d \n", board_row, board_col);
                 compute_path(board, piece_select, target, kingMoves[i]);
                 break;
 
@@ -709,7 +686,6 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
                     continue;
                 }
                 move_valid = 1;
-                printf("Se va a computar el camino a toma\nr");
                 /* Si el movimiento era valido, hay que calcular su trayectoria */
                 int target[2] = {board_row, board_col};
                 compute_path(board, piece_select, target, horseMoves[i]);
@@ -778,9 +754,6 @@ int move_char_piece(Board * board, int id_piece){
 }
 
 int move_piece(Board * board, int id_piece, int des_x, int des_y){
-
-    printf("move_piece: Recibi un movimiento \n");
-    fflush(stdout);
 
     if (id_piece < 0 || id_piece > 15)
     {

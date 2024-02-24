@@ -10,8 +10,7 @@
 
 # include "queue.h"
 # include "pthread_pieces_logic.h"
-
-
+# include "board.h"
 typedef struct request_father
 {
     int action;
@@ -45,6 +44,9 @@ Funcion que inicializa el codigo del hijo
 */
 void usr_child_code(int child_request[2], int father_request[2]);
 
+int handleChildRequests(Board * board, pthread_mutex_t * sem_to_do_father, Queue * to_do_queue_father);
+
+void send_request_to_child(Board * board, int father_request_fd, int action, int piece_id);
 
 
 #endif

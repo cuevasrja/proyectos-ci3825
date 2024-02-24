@@ -40,6 +40,7 @@ typedef struct board {
     int white_king_id;
     /* Atributo que nos indica de quien es el turno en el juego */
     Turn turn;
+    int move_request;
     int winner;
     /*  */
     Cursor cursor;
