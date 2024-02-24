@@ -45,20 +45,20 @@ Funcion que inicializa el codigo del hijo
 void usr_child_code(int child_request[2], int father_request[2]);
 
 /*
-Funcion que manejara las peticiones del hijo
+Funcion que inicializa el codigo del proceso IA
+@param child_request: arreglo de dos elementos que contiene los file descriptors para la comunicacion con el padre
+@param father_request: arreglo de dos elementos que contiene los file descriptors para la comunicacion con el hijo
+*/
+void IA_child_code(int child_request[2], int father_request[2] );
+
+/*
+Funcion que maneja las solicitudes de los hijos del proceso principal
 @param board: tablero del juego
-@param sem_to_do_father: semaforo para manejar la cola de solicitudes del padre
-@param to_do_queue_father: cola de solicitudes del padre
+@param sem_to_do_father: semaforo para poder acceder a la cola de solicitudes
+@param to_do_queue_father: la cola de solicitudes para el proceso principal
 */
 int handleChildRequests(Board * board, pthread_mutex_t * sem_to_do_father, Queue * to_do_queue_father);
 
-/*
-Función que envía una petición al hijo
-@param board: tablero del juego
-@param father_request_fd: file descriptor para la comunicación con el hijo
-@param action: acción a realizar
-@param piece_id: id de la pieza
-*/
 void send_request_to_child(Board * board, int father_request_fd, int action, int piece_id);
 
 
