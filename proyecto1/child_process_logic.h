@@ -44,8 +44,21 @@ Funcion que inicializa el codigo del hijo
 */
 void usr_child_code(int child_request[2], int father_request[2]);
 
+/*
+Funcion que manejara las peticiones del hijo
+@param board: tablero del juego
+@param sem_to_do_father: semaforo para manejar la cola de solicitudes del padre
+@param to_do_queue_father: cola de solicitudes del padre
+*/
 int handleChildRequests(Board * board, pthread_mutex_t * sem_to_do_father, Queue * to_do_queue_father);
 
+/*
+Función que envía una petición al hijo
+@param board: tablero del juego
+@param father_request_fd: file descriptor para la comunicación con el hijo
+@param action: acción a realizar
+@param piece_id: id de la pieza
+*/
 void send_request_to_child(Board * board, int father_request_fd, int action, int piece_id);
 
 
