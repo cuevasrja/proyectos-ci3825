@@ -38,7 +38,6 @@ void * pthread_input_control_child(void * struct_info){
     }
 }
 
-/* Misma funcion pero para el proceso padre.*/
 void * pthread_input_control_father(void * struct_info){
 
     InputUtils * info = (InputUtils *)struct_info;

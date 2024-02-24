@@ -109,7 +109,7 @@ void send_request_to_child(Board * board, int father_request_fd, int action, int
     {
         int i;
         int x = 0;
-        /////////////
+        
         if (board->turn == IA)
             x = 8;
         

@@ -34,9 +34,15 @@ typedef struct request_piece
 
 }RequestPiece;
 
+/*
+Funcion que maneja las interrupciones de los hilos
+*/
 void pthread_piece_handler(int signal);
-    
-void * pthread_piece(void * struct_state);
 
+/*
+Funcion que maneja la logica de los hilos
+@param struct_state: estructura que contiene la informacion del hilo
+*/    
+void * pthread_piece(void * struct_state);
 
 #endif

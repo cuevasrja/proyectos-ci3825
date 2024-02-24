@@ -33,7 +33,6 @@ int kingMoves[8][2] = {
 /* Caracteres para el cursor*/
 char cursor_chars[2] = {'+', '*'};
 
-/* Constructo del tablero */
 Board newBoard() {
     Board board;
 
@@ -164,122 +163,6 @@ Board newBoard() {
     return board;
 }
 
-/*
-Funcion que retorna el tipo de pieza en una celda
-@param board tablero de juego
-@param cell celda de la cual se quiere obtener el tipo de pieza
-@param i coordenada i de la celda
-@param j coordenada j de la celda
-@return tipo de pieza en la celda
-*/
-PieceType get_piece_type(Board * board, Cell * cell, int i, int j){
-    int index = cell -> matrix[i][j];
-    return  board -> pieces[index].type;
-}
-
-/*
-Funcion que retorna el color de la pieza en una celda
-@param board tablero de juego
-@param cell celda de la cual se quiere obtener el color de la pieza
-@param i coordenada i de la celda
-@param j coordenada j de la celda
-@return color de la pieza en la celda
-*/
-PieceColor get_piece_color(Board * board, Cell * cell, int i, int j){
-    int index = cell -> matrix[i][j];
-    return  board -> pieces[index].color;
-}
-
-/*
-Funcion que retorna el caracter que representa una pieza
-@param Board tablero de juego
-@param Cell celda de la cual se quiere obtener el caracter de la pieza
-@param i coordenada i de la celda
-@param j coordenada j de la celda
-@return caracter que representa la pieza
-*/
-char get_piece_char_ij(Board * board, Cell * cell, int i, int j){
-    PieceType type = get_piece_type(board, cell, i, j);
-    PieceColor color = get_piece_color(board, cell, i, j);
-
-    return get_piece_char(type, color);
-}
-
-/*
-Funcion que imprime la tabla de caracteres
-@param new_char_cells tabla de caracteres que se quiere imprimir
-*/
-void print_char_cells(char new_char_cells[33][33]){
-    int n = 33;
-    int i, j;
-    for (i = 0; i < n; i++)
-    {
-        for ( j = 0; j < n; j++)
-        {
-            printf("%c", new_char_cells[i][j]);
-        }
-        printf("\n");
-    }
-
-}
-
-/*
-Funcion que imprime el tablero de juego
-@param board tablero de juego
-*/
-void printBoard(Board * board){
-
-    char new_char_cells[33][33];
-    int i, j, k, l;
-
-    /* Limpiamos la tabla de la iteracion pasada */
-    for (i = 0; i < 33; i++)
-    {
-        for ( j = 0; j < 33; j++)
-        {
-            new_char_cells[i][j] = board->char_cells[i][j];
-        }
-    }
-        
-
-    /* Poscicionamos las piezas donde van */
-    for (i = 0; i < 8; i++)
-    {
-        for (j = 0; j < 8; j++)
-        {
-            Cell * act_cell = &(board->cells[i][j]);
-            for (k = 0; k < 5; k++)
-            {
-                for (l = 0; l < 5; l++)
-                {
-                    if ((act_cell -> matrix[k][l]) == -1)
-                         continue;
-
-                    char char_piece = get_piece_char_ij(board, act_cell, k, l);
-                    new_char_cells[i*4 + k][j*4 + l] = char_piece;
-                }
-            } 
-        }
-    }
-
-    /* Dudoso */
-    /* Posicionamos el cursor */
-    int cur_board_row = board->cursor.board_row;
-    int cur_board_col = board->cursor.board_col;
-    int cur_cell_row  = board->cursor.cell_row;
-    int cur_cell_col  = board->cursor.cell_col;
-    int c = board->cursor.is_cell_valid;
-    char cur_char = cursor_chars[c];
-    new_char_cells[cur_board_row*4 + cur_cell_row][cur_board_col*4 + cur_cell_col] = cur_char;
-
-    print_char_cells(new_char_cells);
-}
-
-/*
-Funcion que mueve el cursor
-@param board tablero de juego
-@param cursor_position_input arreglo de dos enteros que representan el movimiento del cursor
-*/
 void move_cursor(Board * board, int cursor_position_input[2]){
 
     int board_row = board->cursor.board_row;
@@ -362,10 +245,86 @@ void move_cursor(Board * board, int cursor_position_input[2]){
 
 }
 
-/*
-Funcion que avisar si la seleccion del cursor es valida
-@param board tablero de juego
-*/
+PieceType get_piece_type(Board * board, Cell * cell, int i, int j){
+    int index = cell -> matrix[i][j];
+    return  board -> pieces[index].type;
+}
+
+
+PieceColor get_piece_color(Board * board, Cell * cell, int i, int j){
+    int index = cell -> matrix[i][j];
+    return  board -> pieces[index].color;
+}
+
+char get_piece_char_ij(Board * board, Cell * cell, int i, int j){
+    PieceType type = get_piece_type(board, cell, i, j);
+    PieceColor color = get_piece_color(board, cell, i, j);
+
+    return get_piece_char(type, color);
+}
+
+void print_char_cells(char new_char_cells[33][33]){
+    int n = 33;
+    int i, j;
+    for (i = 0; i < n; i++)
+    {
+        for ( j = 0; j < n; j++)
+        {
+            printf("%c", new_char_cells[i][j]);
+        }
+        printf("\n");
+    }
+
+}
+
+void printBoard(Board * board){
+
+    char new_char_cells[33][33];
+    int i, j, k, l;
+
+    /* Limpiamos la tabla de la iteracion pasada */
+    for (i = 0; i < 33; i++)
+    {
+        for ( j = 0; j < 33; j++)
+        {
+            new_char_cells[i][j] = board->char_cells[i][j];
+        }
+    }
+        
+
+    /* Poscicionamos las piezas donde van */
+    for (i = 0; i < 8; i++)
+    {
+        for (j = 0; j < 8; j++)
+        {
+            Cell * act_cell = &(board->cells[i][j]);
+            for (k = 0; k < 5; k++)
+            {
+                for (l = 0; l < 5; l++)
+                {
+                    if ((act_cell -> matrix[k][l]) == -1)
+                         continue;
+
+                    char char_piece = get_piece_char_ij(board, act_cell, k, l);
+                    new_char_cells[i*4 + k][j*4 + l] = char_piece;
+                }
+            } 
+        }
+    }
+
+    /* Dudoso */
+    /* Posicionamos el cursor */
+    int cur_board_row = board->cursor.board_row;
+    int cur_board_col = board->cursor.board_col;
+    int cur_cell_row  = board->cursor.cell_row;
+    int cur_cell_col  = board->cursor.cell_col;
+    int c = board->cursor.is_cell_valid;
+    char cur_char = cursor_chars[c];
+    new_char_cells[cur_board_row*4 + cur_cell_row][cur_board_col*4 + cur_cell_col] = cur_char;
+
+    print_char_cells(new_char_cells);
+}
+
 void is_selection_valid(Board * board){
 
     if (board->turn != USER)
@@ -406,14 +365,6 @@ void is_selection_valid(Board * board){
     
 }
 
-/*
-Funcion que revisa si un movimiento es valido
-@param board tablero de juego
-@param piece pieza que se quiere mover
-@param x coordenada x a la que se quiere mover la pieza
-@param y coordenada y a la que se quiere mover la pieza
-@return 1 si el movimiento es valido, 0 en caso contrario
-*/
 int isValidMove(Board * board, Piece * piece, int x, int y){
     int currentX = getX(piece);
     int currentY = getY(piece);
@@ -435,12 +386,6 @@ int isValidMove(Board * board, Piece * piece, int x, int y){
     return 0;
 }
 
-/*
-Funcion devuelve si es valido el movimiento de una pieza
-@param board tablero de juego
-@param valid_piece_cell arreglo de dos enteros que representan la celda de la pieza que se quiere mover
-*/
-/* Devuelve -1 si salio mal. 1 si se hizo bien*/
 int compute_path(Board * board, int id_piece, int cell_target[2], int move_type[2]){
 
     printf("Dentro de la funcion que calcula el camino\n");
@@ -788,8 +733,6 @@ int is_play_valid(Board * board, int valid_piece_cell[2]){
     
 }
 
-/* Devuelve 1 si se movio de forma correcta la pieza, 0 si hay que hacer que la pieza espere
-un segundo para moverse*/
 int move_char_piece(Board * board, int id_piece){
 
     printf("move_char_piece id: %d \n", id_piece);
@@ -834,7 +777,6 @@ int move_char_piece(Board * board, int id_piece){
 
 }
 
-/* -1 si dio error. 0 si la pieza necesita descansar otro segundo. 1 si el movimiento se hizo*/
 int move_piece(Board * board, int id_piece, int des_x, int des_y){
 
     printf("move_piece: Recibi un movimiento \n");
@@ -907,13 +849,6 @@ int move_piece(Board * board, int id_piece, int des_x, int des_y){
     return 1;
 }
 
-/*
-Funcion que busca un movimiento aleatorio para una pieza
-@param board tablero de juego
-@param piece pieza de la cual se quiere encontrar un movimiento aleatorio
-@return puntero a un arreglo de dos enteros que representan el movimiento aleatorio
-en caso de que no se pueda realizar un movimiento, retorna NULL
-*/
 int* getRandomMove(Board * board, Piece * piece){
     int x = getX(piece);
     int y = getY(piece);
@@ -954,24 +889,10 @@ int* getRandomMove(Board * board, Piece * piece){
     return NULL;
 }
 
-/*
-Función que retorna la distancia de manhattan entre dos puntos
-@param x1 coordenada x del primer punto
-@param y1 coordenada y del primer punto
-@param x2 coordenada x del segundo punto
-@param y2 coordenada y del segundo punto
-@return distancia de manhattan entre los dos puntos
-*/
 int manhattanDistance(int x1, int y1, int x2, int y2){
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
-/*
-Función que retorna la pieza más cercana al caballo
-@param board tablero de juego
-@param piece pieza de la cual se quiere encontrar la pieza más cercana
-@return puntero a la pieza más cercana
-*/
 Piece* getClosestEnemy(Board * board, Piece * piece){
     /*
     Buscamos las coordenadas de la pieza (x, y)
@@ -1013,13 +934,6 @@ Piece* getClosestEnemy(Board * board, Piece * piece){
     return closestEnemy;
 }
 
-/*
-Actualiza la paciencia de una pieza (en segundos). Para calcular la paciencia, se toma en cuenta
-la distancia de manhattan entre la pieza y la pieza más cercana del color contrario, multiplicada
-por 100 y dividida entre el valor de la pieza enemiga mas cercana.
-@param board tablero de juego
-@param piece pieza de la cual se quiere actualizar la paciencia
-*/
 void updatePatience(Board * board, Piece * piece){
     Piece * closestEnemy = getClosestEnemy(board, piece);
     int x = getX(piece);
@@ -1031,22 +945,10 @@ void updatePatience(Board * board, Piece * piece){
     setPatience(piece, patience);
 }
 
-/*
-Funcion que verifica si hay un ganador
-@param board tablero de juego
-@return 1 si hay un ganador, 0 en caso contrario
-*/
 int isWinner(Board * board){
     return board -> winner != -1;
 }
 
-/*
-Funcion que revisa si al un pieza llegar a una casilla, se come a otra pieza
-@param board tablero de juego
-@param piece pieza que se quiere mover
-@param x coordenada x a la que se quiere mover la pieza
-@param y coordenada y a la que se quiere mover la pieza
-*/
 void checkEat(Board * board, Piece * piece, int x, int y){
     /* Chequeamos que la celda no este vacia */
     if (board -> cells[x][y].owner == -1) return;

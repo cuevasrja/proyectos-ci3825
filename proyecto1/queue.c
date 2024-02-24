@@ -2,7 +2,6 @@
 # include <stdlib.h>
 # include "queue.h"
 
-/* Constructor */
 Queue new_queue(){
 
     Queue new_queue;
@@ -13,11 +12,6 @@ Queue new_queue(){
     return new_queue;
 }
 
-/*
-Función que encola un objeto en la cola
-@param queue Cola que se va a modificar
-@param value Valor a agregar
-*/
 void enqueue(Queue * queue, void * value){
 
     Node * new_node = ( Node *)malloc(sizeof(Node));
@@ -47,11 +41,6 @@ void enqueue(Queue * queue, void * value){
 
 }
 
-/*
-Función que retorna el primer objeto de la cola
-@param queue Cola de la que se va a obtener el primer objeto
-@return Primer objeto de la cola
-*/
 void * peek( Queue * queue){
     if (queue->head != NULL)
     {
@@ -60,10 +49,6 @@ void * peek( Queue * queue){
     
 }
 
-/*
-Función que elimina el primer objeto de la cola
-@param queue Cola de la que se va a eliminar el primer objeto
-*/
 void dequeue(Queue * queue){
     if (queue->head == NULL)
     {
@@ -77,10 +62,6 @@ void dequeue(Queue * queue){
     
 }
 
-/*
-Función que libera la memoria de los nodos de la cola
-@param node Nodo que se va a liberar
-*/
 void free_nodes(struct Node * node)
 {
     if (node->next != NULL)

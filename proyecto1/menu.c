@@ -15,20 +15,12 @@ char* menu[] = {
 
 int menuSize = sizeof(menu) / sizeof(menu[0]);
 
-/*
-Esta función muestra el menú
-*/
 void showMenu() {
     for (int i = 0; i < menuSize; i++) {
         printf("%s\n", menu[i]);
     }
 }
 
-/*
-Esta función verifica si el usuario quiere salir
-@param options: las opciones que el usuario ingresó
-@return 1 si el usuario quiere salir, 0 si no
-*/
 int willExit(char options[INPUT], int id_process_child) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
@@ -40,11 +32,6 @@ int willExit(char options[INPUT], int id_process_child) {
     return 0;
 }
 
-/*
-Esta función verifica si las opciones ingresadas por el usuario son válidas
-@param options: las opciones que el usuario ingresó
-@return 1 si las opciones son válidas, 0 si no
-*/
 int isValidOption(char options[INPUT]) {
     int i = 0;
     for (i = 0; i < INPUT; i++) {
@@ -60,10 +47,6 @@ int isValidOption(char options[INPUT]) {
     return 1;
 }
 
-/*
-Esta función pide al usuario que ingrese las opciones
-@param options: las opciones que el usuario ingresó
-*/
 void enterOptions(char options[INPUT]) {
     /* Primero volvemos nulas todas las opciones anteriores */
     int i = 0;

@@ -2,8 +2,6 @@
 # include <stdio.h>
 #include "cell.h"
 
-
-// Constructor. Como parametro recibe un puntero a una pieza que por defecto es NULL
 void init_cell(Cell * cell, int piece_id) {
 
     cell -> owner = piece_id;
@@ -19,4 +17,3 @@ void init_cell(Cell * cell, int piece_id) {
     cell -> matrix[2][2] = piece_id;
 
 }
-

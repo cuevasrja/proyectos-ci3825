@@ -26,10 +26,23 @@ typedef struct input_utils {
     Queue * to_do;
 } InputUtils;
 
+/*
+Funcion que se encarga de manejar las solicitudes del hijo
+@param struct_info: estructura que contiene la informacion necesaria para el hilo
+*/
 void * pthread_input_control_child(void * struct_info);
 
+/*
+Funcion que se encarga de manejar las solicitudes del padre
+@param struct_info: estructura que contiene la informacion necesaria para el hilo
+*/
 void * pthread_input_control_father(void * struct_info);
 
+/*
+Funcion que inicializa el codigo del hijo
+@param child_request: arreglo de dos elementos que contiene los file descriptors para la comunicacion con el padre
+@param father_request: arreglo de dos elementos que contiene los file descriptors para la comunicacion con el hijo
+*/
 void usr_child_code(int child_request[2], int father_request[2]);
 
 

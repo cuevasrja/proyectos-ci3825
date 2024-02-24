@@ -22,25 +22,10 @@ int getInitPatience(PieceType type){
     return initPatience[type];
 }
 
-/*
-Funcion que retorna el caracter que representa la pieza
-@param type Tipo de pieza
-@param color Color de la pieza
-@return Caracter que representa la pieza en el tablero
-*/
 char get_piece_char(PieceType type, PieceColor color){
     return chessPieces[color][type];
 }
 
-/*
-Constructor de la estructura Piece
-@param piece Pieza que se va a inicializar
-@param id identificador de la pieza
-@param type Tipo de pieza (Caballo o Rey)
-@param color Color de la pieza (Blanco o negro)
-@param points Valor de la pieza
-@param patience Paciencia de la pieza (en segundos)
-*/
 void initPiece(Piece * piece, int id, PieceType type, PieceColor color, int points, int patience, int cell_row, int cell_col) {
 
     piece -> id = id;
