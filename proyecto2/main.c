@@ -50,6 +50,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
     else
     {
         printf("\033[91;1mError:\033[0m Carnet o codigo de materia invalido\n");
+        printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
         return EXIT_FAILURE;
     }
     
