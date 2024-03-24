@@ -19,11 +19,13 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
     if (argc <= 1)
     {
         printf("\033[91;1mError:\033[0m Debe ingresar el carnet de un estudiante o el codigo de una materia\n");
+        printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
         return -1;
     }
     else if (argc%2 == 1)
     {
         printf("\033[91;1mError:\033[0m Cantidad de argumentos invalida\n");
+        printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
         return -1;
     }
     
@@ -59,6 +61,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
             if (atoi(argv[i + 1]) == 0)
             {
                 printf("\033[91;1mError:\033[0m La cohorte debe ser un numero entero\n");
+                printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
                 return -1;
             }
             *last_cohort = atoi(argv[i+1]);
@@ -70,6 +73,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
             if (atof(argv[i + 1]) == 0)
             {
                printf("\033[91;1mError:\033[0m La probabilidad de cohorte debe ser un numero\n");
+               printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
                return -1;
             }
             *p_cohort = atof(argv[i+1]);
@@ -81,6 +85,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
             if (atof(argv[i + 1]) == 0)
             {
                 printf("\033[91;1mError:\033[0m El incremento debe ser un numero\n");
+                printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
                 return -1;
             }
             *increase = atof(argv[i+1]);
