@@ -2,7 +2,8 @@
 #include <stdlib.h> /* EXIT_FAILURE, EXIT_SUCCESS*/
 #include <string.h> /* strlen(), strcpy(), strcmp()*/
 
-#include "calc_prob.h"
+# include "calc_prob.h"
+# include "files_finder.h"
 
 /* Funcion que procesa los argumentos pasados por la linea de comando
    Retorna:
@@ -37,6 +38,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
         /* si todos los caracteres estan entre [48, 57]  (los ascii de 0 hasta 9) 
            nos estan pasando un carnet
         */
+       strcpy(carnet, argv[1]);
        result = 0;
     }
     /* Asumiendo que los codigos de materia siempre tienen 6 caracteres (??)*/
@@ -44,7 +46,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
 
         /* podemos revisar si los primeros dos caracteres del argumento NO estan entre
            [48, 57], esto podria indicar que es un cod de materia*/
-
+        strcpy(course_code, argv[1]);
         result = 1; 
     }
     else
@@ -145,11 +147,38 @@ int main(int argc, char const *argv[])
     
     if (r == 0)
     {
-         /* Si r == 0, llamamos el codigo que calcula la proba por carnet*/
+        printf("Carnet: \033[92;1m%s\033[0m\n", carnet);
+        /* Si r == 0, llamamos el codigo que calcula la proba por carnet*/
+        char** asignatures = find_asignatures(root_dir, carnet);
+        if (asignatures[0] == NULL)
+        {
+            printf("\033[91;1mError:\033[0m No se encontraron asignaturas para el carnet %s\n", carnet);
+            return EXIT_FAILURE;
+        }
+        int i = 0;
+        while (asignatures[i] != NULL)
+        {
+            printf("%s\n", asignatures[i]);
+            i++;
+        }
+        free(asignatures);
     }
     else if ( r == 1)
     {
         /* Si r == 1, llamamos el codigo que calcula la cantidad de carros por materia */
+        printf("Codigo de materia: \033[92;1m%s\033[0m\n", course_code);
+        char** students = find_students(root_dir, course_code);
+        if (students[0] == NULL)
+        {
+            printf("\033[91;1mError:\033[0m No se encontraron estudiantes para la materia %s\n", course_code);
+            return EXIT_FAILURE;
+        }
+        int i = 0;
+        while (students[i] != NULL)
+        {
+            printf("%d. %s\n", i, students[i]);
+            i++;
+        }
     }
     else
     {
