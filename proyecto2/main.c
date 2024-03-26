@@ -176,9 +176,10 @@ int main(int argc, char const *argv[])
         int i = 0;
         while (students[i] != NULL)
         {
-            printf("%d. %s\n", i, students[i]);
+            printf("%s\n", students[i]);
             i++;
         }
+        free(students);
     }
     else
     {

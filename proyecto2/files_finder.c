@@ -138,23 +138,14 @@ char** find_asignatures(char* root_name, char* carnet){
 
 /*
 Busca los estudiantes inscritos en un curso sin importar la seccion
-! No funciona bien si hay mas de una seccion de la misma materia
 */
 char** find_students(char* root_name, char* course_code){
-    char** students = (char**)malloc(100*sizeof(char*));
+    char** students = (char**)malloc(1000*sizeof(char*));
     if (students == NULL)
     {
         perror("No se pudo reservar memoria. students en find_students");
         return NULL;
     }
-    char* target = (char*)malloc(30*sizeof(char));
-    if (target == NULL)
-    {
-        perror("No se pudo reservar memoria. target en find_students");
-        return NULL;
-    }
-    strcat(target, course_code);
-    strcat(target, " seccion ");
     char* course_prefix = (char*)malloc(3*sizeof(char));
     if (course_prefix == NULL)
     {
@@ -195,60 +186,54 @@ char** find_students(char* root_name, char* course_code){
                                         if ((dir4 = opendir(file_name3)) != NULL) {
                                             int i = 0;
                                             while ((ent4 = readdir(dir4)) != NULL) {
-                                                int seccion = 1;
-                                                while (seccion <= MAX_SECTIONS){
-                                                    char* target_file = (char*)malloc(30*sizeof(char));
-                                                    if (target_file == NULL)
-                                                    {
-                                                        perror("No se pudo reservar memoria. target_file en find_students");
+                                                char* file_cpy = (char*)malloc(50*sizeof(char));
+                                                if (file_cpy == NULL)
+                                                {
+                                                    perror("No se pudo reservar memoria. file_cpy en find_students");
+                                                    return NULL;
+                                                }
+                                                strcpy(file_cpy, ent4->d_name);
+                                                char* token_file = (char*)malloc(10*sizeof(char));
+                                                if (token_file == NULL)
+                                                {
+                                                    perror("No se pudo reservar memoria. token_file en find_students");
+                                                    return NULL;
+                                                }
+                                                token_file = strtok(file_cpy, " ");
+                                                if (strcmp(token_file, course_code) == 0){
+                                                    FILE *file;
+                                                    char* file_name4 = (char*)malloc(50*sizeof(char));
+                                                    strcpy(file_name4, file_name3);
+                                                    strcat(file_name4, "/");
+                                                    strcat(file_name4, ent4->d_name);
+                                                    file = fopen(file_name4, "r");
+                                                    if (file == NULL) {
+                                                        perror("No se pudo abrir el archivo");
                                                         return NULL;
                                                     }
-                                                    strcat(target_file, target);
-                                                    char* section = (char*)malloc(3*sizeof(char));
-                                                    if (section == NULL)
-                                                    {
-                                                        perror("No se pudo reservar memoria. section en find_students");
-                                                        return NULL;
-                                                    }
-                                                    sprintf(section, "%d", seccion);
-                                                    strcat(target_file, section);
-                                                    strcat(target_file, ".txt");
-                                                    if (strcmp(ent4->d_name, target_file) == 0){
-                                                        FILE *file;
-                                                        char* file_name4 = (char*)malloc(50*sizeof(char));
-                                                        strcpy(file_name4, file_name3);
-                                                        strcat(file_name4, "/");
-                                                        strcat(file_name4, ent4->d_name);
-                                                        file = fopen(file_name4, "r");
-                                                        if (file == NULL) {
-                                                            perror("No se pudo abrir el archivo");
+                                                    char* line = NULL;
+                                                    size_t len = 0;
+                                                    int j = 0;
+                                                    while (getline(&line, &len, file) != -1) {
+                                                        if (j == 0){
+                                                            j++;
+                                                            continue;
+                                                        }
+                                                        students[i] = (char*)malloc(10*sizeof(char));
+                                                        char* token = strtok(line, "\n");
+                                                        if (students[i] == NULL)
+                                                        {
+                                                            perror("No se pudo reservar memoria. students[i] en find_students");
                                                             return NULL;
                                                         }
-                                                        char* line = NULL;
-                                                        int j = 0;
-                                                        size_t len = 0;
-                                                        while (getline(&line, &len, file) != -1) {
-                                                            if(j == 0){
-                                                                j++;
-                                                                continue;
-                                                            }
-                                                            students[i] = (char*)malloc(10*sizeof(char));
-                                                            if (students[i] == NULL)
-                                                            {
-                                                                perror("No se pudo reservar memoria. students[i] en find_students");
-                                                                return NULL;
-                                                            }
-                                                            char* token = strtok(line, "\n");
-                                                            strcpy(students[i], token);
-                                                            i++;
-                                                        }
-                                                        fclose(file);
-                                                        free(line);
-                                                        free(file_name4);
-                                                        break;
+                                                        strcpy(students[i], token);
+                                                        i++;
+                                                        j++;
                                                     }
-                                                    seccion++;
+                                                    fclose(file);
+                                                    free(line);
                                                 }
+                                                free(file_cpy);
                                             }
                                             closedir(dir4);
                                         } else {
@@ -279,7 +264,6 @@ char** find_students(char* root_name, char* course_code){
         perror("No se pudo abrir el directorio");
         return NULL;
     }
-    free(target);
     free(course_prefix);
     return students;                               
 }
