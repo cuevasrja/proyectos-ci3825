@@ -4,6 +4,7 @@
 
 # include "calc_prob.h"
 # include "files_finder.h"
+# include "queue.h"
 
 /* Funcion que procesa los argumentos pasados por la linea de comando
    Retorna:
@@ -38,6 +39,17 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
         /* si todos los caracteres estan entre [48, 57]  (los ascii de 0 hasta 9) 
            nos estan pasando un carnet
         */
+       int i;
+       for (i = 0; i < 7; i++)
+       {
+            if (argv[1][i] < 48 || argv[1][i] > 57)
+            {
+                printf("\033[91;1mError:\033[0m carnet invalido \n");
+                return -1;
+            }
+            
+       }
+       
        strcpy(carnet, argv[1]);
        result = 0;
     }
@@ -149,37 +161,39 @@ int main(int argc, char const *argv[])
     {
         printf("Carnet: \033[92;1m%s\033[0m\n", carnet);
         /* Si r == 0, llamamos el codigo que calcula la proba por carnet*/
-        char** asignatures = find_asignatures(root_dir, carnet);
-        if (asignatures[0] == NULL)
+        Queue * asignatures = find_asignatures(root_dir, carnet);
+        if (asignatures == NULL)
         {
             printf("\033[91;1mError:\033[0m No se encontraron asignaturas para el carnet %s\n", carnet);
             return EXIT_FAILURE;
         }
-        int i = 0;
-        while (asignatures[i] != NULL)
+        Node * act_node = asignatures->head;
+        while (act_node != NULL)
         {
-            printf("%s\n", asignatures[i]);
-            i++;
+
+            printf("%s\n", (char *)act_node->value);
+            act_node = act_node->next;
         }
-        free(asignatures);
+        // free(asignatures);
     }
     else if ( r == 1)
     {
         /* Si r == 1, llamamos el codigo que calcula la cantidad de carros por materia */
         printf("Codigo de materia: \033[92;1m%s\033[0m\n", course_code);
-        char** students = find_students(root_dir, course_code);
-        if (students[0] == NULL)
+        Queue * students = find_students(root_dir, course_code);
+        if (students == NULL)
         {
             printf("\033[91;1mError:\033[0m No se encontraron estudiantes para la materia %s\n", course_code);
             return EXIT_FAILURE;
         }
         int i = 0;
-        while (students[i] != NULL)
+        Node * act_node = students->head;
+        while (act_node != NULL)
         {
-            printf("%s\n", students[i]);
-            i++;
+            printf("%s\n", (char *)act_node->value);
+            act_node = act_node->next;
         }
-        free(students);
+        // free(students);
     }
     else
     {
