@@ -3,7 +3,7 @@
 
 # Variables
 CC = gcc
-# CFLAGS = -Wall -Wextra -Werror -std=c99 -g
+CFLAGS = -ansi
 LDFLAGS = -lm
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)

@@ -8,7 +8,6 @@
 # include "files_finder.h"
 #define MAX_SECTIONS 10
 
-
 /*
 Busca los archivos de comprobantes de un estudiante en el directorio de comprobantes
 y devuelve un arreglo con los codigos de las materias y sus secciones
@@ -52,8 +51,6 @@ Queue * find_asignatures(char* root_name, char* carnet){
         strcat(sede_path, "/");
         strcat(sede_path, ent_root_dir->d_name);
 
-        printf("Ruta a la sede: %s \n", sede_path);
-
         if ((sede_dir = opendir(sede_path)) == NULL)
         {
             printf("No se pudo abrir el directorio: %s \n", sede_path);
@@ -71,9 +68,6 @@ Queue * find_asignatures(char* root_name, char* carnet){
             strcat(comp_path, "/");
             strcat(comp_path, ent_sede_dir->d_name);
 
-            printf("Ruta a los comprobantes de la sede: %s \n", comp_path);
-
-
             if ((comp_dir = opendir(comp_path)) == NULL)
             {
                 printf("No se pudo abrir el directorio: %s \n", comp_path);
@@ -90,8 +84,6 @@ Queue * find_asignatures(char* root_name, char* carnet){
                 strcat(coh_path, "/");
                 strcat(coh_path, ent_comp_dir->d_name);
 
-                printf("Ruta a la cohorte buscada: %s \n", coh_path);
-
                 if ((cohorte_dir = opendir(coh_path)) == NULL)
                 {
                     printf("No se pudo abrir el directorio: %s \n", coh_path);
@@ -106,14 +98,11 @@ Queue * find_asignatures(char* root_name, char* carnet){
                     }
 
                     /* Esto debe ir en otra funcion */
-                    printf("Archivo encontrado!\n");
                     FILE *carnet_file;
 
                     strcpy(carnet_path, coh_path);
                     strcat(carnet_path, "/");
                     strcat(carnet_path, ent_coh_dir->d_name);
-
-                    printf("Ruta al archivo buscada: %s \n", carnet_path);
 
                     carnet_file = fopen(carnet_path, "r");
                     if (carnet_file == NULL) {
@@ -192,8 +181,6 @@ Queue * find_students(char* root_name, char* course_code){
         strcat(sede_path, "/");
         strcat(sede_path, ent_root_dir->d_name);
 
-        printf("Ruta a la sede: %s \n", sede_path);
-
         if ((sede_dir = opendir(sede_path)) == NULL)
         {
             printf("No se pudo abrir el directorio: %s \n", sede_path);
@@ -211,9 +198,6 @@ Queue * find_students(char* root_name, char* course_code){
             strcat(list_path, "/");
             strcat(list_path, ent_sede_dir->d_name);
 
-            printf("Ruta a las listas de la sede: %s \n", list_path);
-
-
             if ((list_dir = opendir(list_path)) == NULL)
             {
                 printf("No se pudo abrir el directorio: %s \n", list_path);
@@ -230,8 +214,6 @@ Queue * find_students(char* root_name, char* course_code){
                 strcat(apt_path, "/");
                 strcat(apt_path, ent_list_dir->d_name);
 
-                printf("Ruta al apartemonto buscada: %s \n", apt_path);
-
                 if ((apt_dir = opendir(apt_path)) == NULL)
                 {
                     printf("No se pudo abrir el directorio: %s \n", apt_path);
@@ -246,14 +228,11 @@ Queue * find_students(char* root_name, char* course_code){
                     }
 
                     /* Esto debe ir en otra funcion */
-                    printf("Archivo encontrado!\n");
                     FILE *course_file;
 
                     strcpy(course_path, apt_path);
                     strcat(course_path, "/");
                     strcat(course_path, ent_apt_dir->d_name);
-
-                    printf("Ruta al archivo buscada: %s \n", course_path);
 
                     course_file = fopen(course_path, "r");
                     if (course_file == NULL) {

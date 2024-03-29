@@ -65,7 +65,7 @@ int process_arguments(int argc, char const *argv[], char carnet[10], char course
     {
         printf("\033[91;1mError:\033[0m Carnet o codigo de materia invalido\n");
         printf("Use %s -h/--help para obtener ayuda\n", argv[0]);
-        return EXIT_FAILURE;
+        return -1;
     }
     
     int i;
@@ -135,6 +135,20 @@ void print_help(char const *argv[]){
     printf("  %s 1910056\n", argv[0]);
 }
 
+void print_welcome(){
+    printf("👋 \033[93;1mBienvenido al sistema de análisis de datos de PideCola 3.0\033[0m 👋\n");
+    printf("💻 \033[93;1mDesarrollado por:\033[0m\n");
+    printf("  \033[93;1m-\033[0m Sandibel Soares\n");
+    printf("  \033[93;1m-\033[0m Carlo Herrera\n");
+    printf("  \033[93;1m-\033[0m Juan Cuevas\n");
+}
+
+void print_goodbye(){
+    printf("\n");
+    printf("👋 \033[93;1mGracias por usar el sistema de análisis de datos de PideCola 3.0\033[0m 👋\n");
+    printf("\033[93;1mPD:\033[0m Alguien por favor que nos de una cola, nos quedamos en la uni 🥺\n");
+}
+
 int main(int argc, char const *argv[])
 {
     /* Variables */
@@ -156,10 +170,17 @@ int main(int argc, char const *argv[])
     int r = process_arguments(argc, argv, carnet, course_code, \
                               &last_cohort, &p_cohort, &increase, root_dir);
 
+    if (r == -1)
+    {
+        return EXIT_FAILURE;
+    }
+
+    print_welcome();
+
     
     if (r == 0)
     {
-        printf("Carnet: \033[92;1m%s\033[0m\n", carnet);
+        printf("🧮 Vamos a calcular la probabilidad de que el estudiante \033[92;1m%s\033[0m pueda subir a la universidad en cola 🧮\n", carnet);
         /* Si r == 0, llamamos el codigo que calcula la proba por carnet*/
         Queue * asignatures = find_asignatures(root_dir, carnet);
         if (asignatures == NULL)
@@ -168,18 +189,17 @@ int main(int argc, char const *argv[])
             return EXIT_FAILURE;
         }
         Node * act_node = asignatures->head;
+        printf("📚 Asignaturas preinscritas por el estudiante:\n");
         while (act_node != NULL)
         {
-
-            printf("%s\n", (char *)act_node->value);
+            printf("  - \033[94m%s\033[0m\n", (char *)act_node->value);
             act_node = act_node->next;
         }
-        // free(asignatures);
     }
     else if ( r == 1)
     {
         /* Si r == 1, llamamos el codigo que calcula la cantidad de carros por materia */
-        printf("Codigo de materia: \033[92;1m%s\033[0m\n", course_code);
+        printf("🧮 Vamos a calcular la cantidad promedio de carros para la materia \033[92;1m%s\033[0m y si son suficientes para que todos los estudiantes puedan subir 🧮\n", course_code);
         Queue * students = find_students(root_dir, course_code);
         if (students == NULL)
         {
@@ -188,18 +208,14 @@ int main(int argc, char const *argv[])
         }
         int i = 0;
         Node * act_node = students->head;
+        printf("🎓 Estudiantes inscritos en la materia:\n");
         while (act_node != NULL)
         {
-            printf("%s\n", (char *)act_node->value);
+            printf("  - \033[94m%s\033[0m\n", (char *)act_node->value);
             act_node = act_node->next;
         }
-        // free(students);
-    }
-    else
-    {
-        return EXIT_FAILURE;
     }
     
-
+    print_goodbye();
     return EXIT_SUCCESS;
 }
