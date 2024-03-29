@@ -70,3 +70,12 @@ void free_nodes(struct Node * node)
     free(node);
 }
 
+void print_queue(Queue * queue)
+{
+    Node * act_node = queue->head;
+    while (act_node != NULL)
+    {
+        printf("  - \033[94m%s\033[0m\n", (char *)act_node->value);
+        act_node = act_node->next;
+    }
+}

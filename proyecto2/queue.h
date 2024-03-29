@@ -47,4 +47,10 @@ Función que libera la memoria de los nodos de la cola
 */
 void free_nodes( Node * node);
 
+/*
+Función que imprime los elementos de la cola
+@param queue Cola que se va a imprimir
+*/
+void print_queue(Queue * queue);
+
 #endif

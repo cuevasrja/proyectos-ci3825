@@ -188,13 +188,9 @@ int main(int argc, char const *argv[])
             printf("\033[91;1mError:\033[0m No se encontraron asignaturas para el carnet %s\n", carnet);
             return EXIT_FAILURE;
         }
-        Node * act_node = asignatures->head;
         printf("📚 Asignaturas preinscritas por el estudiante:\n");
-        while (act_node != NULL)
-        {
-            printf("  - \033[94m%s\033[0m\n", (char *)act_node->value);
-            act_node = act_node->next;
-        }
+        print_queue(asignatures);
+        printf("\033[94;1mTotal de asignaturas preinscritas:\033[0m %d\n", asignatures->length);
     }
     else if ( r == 1)
     {
@@ -206,14 +202,9 @@ int main(int argc, char const *argv[])
             printf("\033[91;1mError:\033[0m No se encontraron estudiantes para la materia %s\n", course_code);
             return EXIT_FAILURE;
         }
-        int i = 0;
-        Node * act_node = students->head;
         printf("🎓 Estudiantes inscritos en la materia:\n");
-        while (act_node != NULL)
-        {
-            printf("  - \033[94m%s\033[0m\n", (char *)act_node->value);
-            act_node = act_node->next;
-        }
+        print_queue(students);
+        printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
     }
     
     print_goodbye();
