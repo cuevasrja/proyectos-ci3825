@@ -6,10 +6,6 @@ int calc_prob(FILE* ptr, int estudiante){
     char* fline[200]
     char* line[7]
 
-    //Si el estudiante es de una cohorte posterior al 2000, sumamos 100 para 
-    //mantener la distancia entre dos cohortes.
-    if(estudiante < 70 ) estudiante += 100;
-
     //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
     //en el bus de la universidad y el 10% de llegar por transporte publico
     int prob = 25;
@@ -32,9 +28,16 @@ int calc_prob(FILE* ptr, int estudiante){
         if(cohorte < 70 ) cohorte += 100;
 
         //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
-        prob += (121-cohorte)*4 
+        prob += 3 + (121-cohorte)*4 
     }
 
+    //Si el estudiante por el que se consulta es de una cohorte posterior al 2000, sumamos 100 
+    //para mantener la distancia entre dos cohortes.
+    if(estudiante < 70 ) estudiante += 100;
+
+    //Restamos la probabilidad del estudiante por el que se consulta de tener carro segun su 
+    //cohorte al acumulado.
+    prob -= 3 + (121-estudiante)*4 
 
     //La probabilidad maxima es de 100%
     if(prob > 100){
@@ -43,3 +46,5 @@ int calc_prob(FILE* ptr, int estudiante){
 
     return prob
 }
+
+int 
