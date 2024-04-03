@@ -1,12 +1,14 @@
 # include <stdio.h>
 # include <math.h>
+#include <cstdio>
+#include <cstddef>
 
 //Calculo de  Probabilidad con valores por defecto
 int calc_prob(FILE* ptr, int estudiante){
     
     //Buffer for line data storage
-    char* fline[200]
-    char* line[7]
+    char* fline[200];
+    char* line[7];
 
     //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
     //en el bus de la universidad y el 10% de llegar por transporte publico
@@ -52,11 +54,11 @@ int calc_prob(FILE* ptr, int estudiante){
 void car_prob(FILE* ptr){
 
     //Buffer for line data storage
-    char* fline[200]
-    char* line[7]
+    char* fline[200];
+    char* line[7];
 
-    float cars;
     int cohorte;
+    float cars = 0;
     float num_estudiantes = 0;
     int i;
 
@@ -64,7 +66,7 @@ void car_prob(FILE* ptr){
     fgets(fline, 200, ptr);
     
     //Leemos cada linea de estudiantes
-    while( fgets(line, 7, ptr) != NULL){n
+    while( fgets(line, 7, ptr) != NULL){
 
         //Leemos la linea
         fgets(line, 7, ptr);
@@ -72,7 +74,7 @@ void car_prob(FILE* ptr){
         num_estudiantes++;
 
         //Extraemos la cohorte como entero
-        cohorte = (line[0] - "0") * 10 + (line[1] - "0")
+        cohorte = (line[0] - '0') * 10 + (line[1] - '0')
         
         //Si es una cohorte posterior al 2000 sumamos 100 para mantener
         //la distancia entre dos cohortes.
@@ -82,17 +84,17 @@ void car_prob(FILE* ptr){
         cars += 0.03 + (121-cohorte)*0.04 
     }
 
-    num_estudiantes = num_estudiantes * 0.25;
+    num_estudiantes -= ceil(num_estudiantes * 0.25);
 
     fprintf("Para la asignatura ");
     for(i = 0; i < 6; i++){
         fprintf("%c", fline[i]);
     }
-    fprintf(" se esperan %d carros \n", cars);
+    fprintf(" se esperan %.2f carros. \n", cars);
 
     if((cars * 3) - num_estudiantes >= 0){
-        fprintf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes.");
+        fprintf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes. \n");
     } else {
-        fprintf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes.");
+        fprintf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes. \n");
     }
 }
