@@ -1,94 +1,179 @@
 # include <stdio.h>
 # include <math.h>
-#include <cstdio>
-#include <cstddef>
+# include <string.h>
 
-//Calculo de  Probabilidad con valores por defecto
-int calc_prob(FILE* ptr, int estudiante){
-    
-    //Buffer for line data storage
-    char* fline[200];
-    char* line[7];
+# include "calc_prob.h"
+
+int student_prob(Queue * students, char* carnet){
 
     //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
     //en el bus de la universidad y el 10% de llegar por transporte publico
     int prob = 25;
     int cohorte;
 
-    //Primera linea
-    fgets(fline, 200, ptr);
-    
+    char *line[7];
+
     //Leemos cada linea de estudiantes
-    while( fgets(line, 7, ptr) != NULL){
+    while(students->length != 0){
 
         //Leemos la linea
-        fgets(line, 7, ptr);
+        line = peek(students);
 
         //Extraemos la cohorte como entero
-        cohorte = (line[0] - "0") * 10 + (line[1] - "0")
+        cohorte = (line[0] - "0") * 10 + (line[1] - "0");
         
         //Si es una cohorte posterior al 2000 sumamos 100 para mantener
         //la distancia entre dos cohortes.
         if(cohorte < 70 ) cohorte += 100;
 
         //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
-        prob += 3 + (121-cohorte)*4 
+        prob += 3 + (121-cohorte)*4;
+
+        dequeue(students);
     }
+
+    //Extraemos la cohorte del estudiante por el que se consulta como entero.
+    cohorte = (carnet[0] - "0") * 10 + (carnet[1] - "0");
 
     //Si el estudiante por el que se consulta es de una cohorte posterior al 2000, sumamos 100 
     //para mantener la distancia entre dos cohortes.
-    if(estudiante < 70 ) estudiante += 100;
+    if(cohorte < 70 ) cohorte += 100;
 
     //Restamos la probabilidad del estudiante por el que se consulta de tener carro segun su 
     //cohorte al acumulado.
-    prob -= 3 + (121-estudiante)*4 
+    prob -= 3 + (121-cohorte)*4;
 
     //La probabilidad maxima es de 100%
-    if(prob > 100){
-        prob = 100;
-    }
+    if(prob > 100) prob = 100;
 
-    return prob
+    return prob;
 }
 
-void car_prob(FILE* ptr){
+int student_prob(Queue * students, char* carnet, float p, float q){
+
+    //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
+    //en el bus de la universidad y el 10% de llegar por transporte publico
+    float prob = 25;
+    int cohorte;
+
+    char *line[7];
+
+    //Leemos cada linea de estudiantes
+    while(students->length != 0){
+
+        //Leemos la linea
+        line = peek(students);
+
+        //Extraemos la cohorte como entero
+        cohorte = (line[0] - "0") * 10 + (line[1] - "0");
+        
+        //Si es una cohorte posterior al 2000 sumamos 100 para mantener
+        //la distancia entre dos cohortes.
+        if(cohorte < 70 ) cohorte += 100;
+
+        //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
+        prob += p + (121-cohorte)*q;
+
+        dequeue(students);
+    }
+
+    //Extraemos la cohorte del estudiante por el que se consulta como entero.
+    cohorte = (carnet[0] - "0") * 10 + (carnet[1] - "0");
+
+    //Si el estudiante por el que se consulta es de una cohorte posterior al 2000, sumamos 100 
+    //para mantener la distancia entre dos cohortes.
+    if(cohorte < 70 ) cohorte += 100;
+
+    //Restamos la probabilidad del estudiante por el que se consulta de tener carro segun su 
+    //cohorte al acumulado.
+    prob -= 3 + (121-cohorte)*4;
+
+    //La probabilidad maxima es de 100%
+    if(prob > 100) prob = 100;
+
+    return prob;
+}
+
+void car_prob(Queue * students, char* asignature){
 
     //Buffer for line data storage
-    char* fline[200];
     char* line[7];
 
     int cohorte;
     float cars = 0;
     float num_estudiantes = 0;
     int i;
-
-    //Primera linea
-    fgets(fline, 200, ptr);
     
     //Leemos cada linea de estudiantes
-    while( fgets(line, 7, ptr) != NULL){
+    while( students->length != 0){
 
-        //Leemos la linea
-        fgets(line, 7, ptr);
+        line = peek(students);
 
         num_estudiantes++;
 
         //Extraemos la cohorte como entero
-        cohorte = (line[0] - '0') * 10 + (line[1] - '0')
+        cohorte = (line[0] - '0') * 10 + (line[1] - '0');
         
         //Si es una cohorte posterior al 2000 sumamos 100 para mantener
         //la distancia entre dos cohortes.
         if(cohorte < 70 ) cohorte += 100;
 
         //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
-        cars += 0.03 + (121-cohorte)*0.04 
+        cars += 0.03 + (121-cohorte)*0.04;
+
+        dequeue(students);
     }
 
     num_estudiantes -= ceil(num_estudiantes * 0.25);
 
     fprintf("Para la asignatura ");
     for(i = 0; i < 6; i++){
-        fprintf("%c", fline[i]);
+        fprintf("%c", asignature[i]);
+    }
+    fprintf(" se esperan %.2f carros. \n", cars);
+
+    if((cars * 3) - num_estudiantes >= 0){
+        fprintf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes. \n");
+    } else {
+        fprintf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes. \n");
+    }
+}
+
+void car_prob(Queue * students, char* asignature, float p, float q){
+
+    //Buffer for line data storage
+    char* line[7];
+
+    int cohorte;
+    float cars = 0;
+    float num_estudiantes = 0;
+    int i;
+    
+    //Leemos cada linea de estudiantes
+    while( students->length != 0){
+
+        line = peek(students);
+
+        num_estudiantes++;
+
+        //Extraemos la cohorte como entero
+        cohorte = (line[0] - '0') * 10 + (line[1] - '0');
+        
+        //Si es una cohorte posterior al 2000 sumamos 100 para mantener
+        //la distancia entre dos cohortes.
+        if(cohorte < 70 ) cohorte += 100;
+
+        //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
+        cars += p + (121-cohorte)*q;
+
+        dequeue(students);
+    }
+
+    num_estudiantes -= ceil(num_estudiantes * 0.25);
+
+    fprintf("Para la asignatura ");
+    for(i = 0; i < 6; i++){
+        fprintf("%c", asignature[i]);
     }
     fprintf(" se esperan %.2f carros. \n", cars);
 
