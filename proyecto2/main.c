@@ -19,7 +19,6 @@
 
 # include "calc_prob.h"     /* funciones calc_prob, car_prob */
 # include "files_finder.h"  /* funciones find_asignatures, find_students*/
-# include "queue.h"         /*  Struct Queue; funciones peek, dequeue*/
 
 /* Funcion que procesa los argumentos pasados por la linea de comando
    Retorna:
