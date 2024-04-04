@@ -3,7 +3,7 @@
 # include <stdlib.h>
 
 /*Calculo de  Probabilidad con valores por defecto*/
-int calc_prob(FILE* ptr, int estudiante){
+float calc_prob(FILE* ptr, int estudiante){
     
     /*Buffer for line data storage*/
     char* fline;
@@ -13,7 +13,7 @@ int calc_prob(FILE* ptr, int estudiante){
     inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
     en el bus de la universidad y el 10% de llegar por transporte publico
     */
-    int prob = 25;
+    float prob = 25.0;
     int cohorte;
 
     /*Primera linea*/

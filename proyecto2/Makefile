@@ -1,6 +1,19 @@
 # Proyecto 2 Enero–Marzo 2024 (Pidecola)
 # Autores: Sandibel Soares, Carlo Herrera, Juan Cuevas
 
+# Estructura del Proyecto
+#                  main.c
+#                 /  |   \ 
+#                /   |    \ 
+# 		        /    |     \ 
+#              /     |      \ 
+#             /      |       \ 
+#            /       |        \ 
+#           /        |         \ 
+#          /         |          \ 
+#         /          |           \ 
+# calc_prob.c <--- queue.c --> files_finder.c
+
 # Variables
 CC = gcc
 CFLAGS = -ansi
