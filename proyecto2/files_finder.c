@@ -1,16 +1,31 @@
-# include <string.h>
+/*  Proyecto 2. Pide Cola
+    Participantes:
+        Sandibel Soares
+        Carlo Herrera
+        Juan Cuevas
+
+    Archivo: files_finder.c 
+    Contiene las funciones para:
+        - Encontrar y devolver las materias inscritas por un estudiante dado su carnet 
+        - Encontrar y devolver los estudiantes que inscribieron una materia dado el codigo
+*/
+
+# include <string.h>   /* funciones strlen, strcmp, strncmp, strcat, strncat, strcpy */
 # include <stdlib.h>
-# include <stdio.h>
-# include <dirent.h>
+# include <stdio.h>    /* funcion printf */
+# include <dirent.h>   /* DIR; funciones opendir, readdir, closedir */
+
+/* Son necesario ?*/
 # include <sys/stat.h>
 # include <sys/types.h>
 
 # include "files_finder.h"
-#define MAX_SECTIONS 10
 
-/*
-Busca los archivos de comprobantes de un estudiante en el directorio de comprobantes
-y devuelve un arreglo con los codigos de las materias y sus secciones
+/*  
+    Dado un carnet y la ruta a la carpeta principal con los archivos de DACE se busca 
+    el comprobante del estudiante en los directorios de comprobantes de Sartenejas y Litoral.
+    Retorna una cola con apuntadores a los string que contienen los codigos de las materias 
+    que el estudiante inscribio. Si ocurrio un error se duevuelve NULL.
 */
 Queue * find_asignatures(char* root_name, char* carnet){
 
@@ -20,7 +35,7 @@ Queue * find_asignatures(char* root_name, char* carnet){
     int file_found = 0;
 
     /* Vamos a abir cuatro directorios:
-        el directorio raiz con todos los archivos (DACE o el dado)
+        el directorio raiz con todos los archivos (DACE o el dado por el usuario)
         cada directorio de las sedes, ya que no sabemos a cual pertenece el estudiante
         sus directorios de comprobantes correspondientes y el dir de la cohorte
     */
@@ -46,7 +61,6 @@ Queue * find_asignatures(char* root_name, char* carnet){
             continue;
         }
         
-        /* Podemos hacer una funcion auxiliar para crear las rutas */
         strcpy(sede_path, root_name);
         strcat(sede_path, "/");
         strcat(sede_path, ent_root_dir->d_name);
@@ -129,7 +143,6 @@ Queue * find_asignatures(char* root_name, char* carnet){
                             enqueue(asignatures, (void *) code_asig);
                         }
                     }
-                    /* Hay que revisar que se cerró bien */
                     fclose(carnet_file);
                     free(line);
                     file_found = 1;
@@ -151,7 +164,9 @@ Queue * find_asignatures(char* root_name, char* carnet){
 
 
 /*
-Busca los estudiantes inscritos en un curso sin importar la seccion
+    Dado el codigo de una materia y la ruta a la carpeta principal con los archivos 
+    de DACE se busca los estudiantes inscritos en la materia sin importar la seccion.
+    Se devuelve una cola con los carnets de los estudiantes inscritos.
 */
 Queue * find_students(char* root_name, char* course_code){
 
