@@ -15,10 +15,6 @@
 # include <stdio.h>    /* funcion printf */
 # include <dirent.h>   /* DIR; funciones opendir, readdir, closedir */
 
-/* Son necesario ?*/
-# include <sys/stat.h>
-# include <sys/types.h>
-
 # include "files_finder.h"
 
 /*  
