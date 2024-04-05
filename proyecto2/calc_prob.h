@@ -22,7 +22,7 @@ estudiante pueda conseguir cola con alguno de sus compañeros.
 @param q: incremento de la proporción de carro-habientes de una cohorte a la anterior. 
 @return: probabilidad porcentual de que el estudiante pueda conseguir cola.
 */
-float student_prob(Queue * students, char* carnet, float p, float q);
+float student_prob_default(Queue * students, char* carnet, float p, float q);
 
 /*
 Funcion que toma los estudiantes de una sección y calcula la cantidad de carros esperados 
@@ -43,6 +43,6 @@ para la materia y si esta es suficiente para que todos puedan subir.
 @param q: incremento de la proporción de carro-habientes de una cohorte a la anterior. 
 @return: probabilidad porcentual de que el estudiante pueda conseguir cola.
 */
-void car_prob(Queue * students, char* asignature, float p, float q);
+void car_prob_default(Queue * students, char* asignature, float p, float q);
 
 #endif
