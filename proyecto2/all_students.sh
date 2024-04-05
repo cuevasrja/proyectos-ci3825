@@ -53,6 +53,8 @@ fi
 # Se recorren todos los estudiantes en all_students.txt
 while read LINE; do
     # Se ejecuta el programa pidecola.out con el carnet del estudiante y los argumentos dados
+    # Un ejemplo de la linea a a buscar es: "Probabilidad total de asistencia: \033[1;92mX.XX%\033[0m"
+    # Siendo el formato de la linea: "Probabilidad total de asistencia: \033[1;92mX.XX%\033[0m"
     ./pidecola.out $LINE $@ | grep "Probabilidad total de asistencia: " | grep -o "[0-9]*\.[0-9]*" >> probabilities.txt
 done < all_students.txt
 

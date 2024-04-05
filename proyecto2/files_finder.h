@@ -22,6 +22,4 @@ Funcion que busca los estudiantes de una materia en las listas definitivas
 */
 Queue * find_students(char* root_name, char* course_code);
 
-int check_course(char* root_name, char* course_code, char* carnet);
-
 #endif

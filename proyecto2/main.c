@@ -215,8 +215,8 @@ int main(int argc, char const *argv[])
     char  carnet[10];
     /* Arreglo de caracteres en donde se guarda el codigo de una materia pasada */
     char  course_code[10];
-    /* Ultima corte de la universidad, por defecto la 21 */
-    int   last_cohort = 21;
+    /* Ultima corte de la universidad, por defecto la 22 */
+    int   last_cohort = 22;
     /* Probabilidad de que la ultima corte tenga un carro, por defecto 3 */
     float p_cohort = 3;
     /* Incremento de la probabilidad de tener carro con respecto a la ultima corte */
@@ -260,40 +260,6 @@ int main(int argc, char const *argv[])
             return EXIT_FAILURE;
         }
 
-        /*
-        printf("📚 Asignaturas inscritas por el estudiante:\n");
-        Node* current = asignatures->head;
-        Node* prev = NULL;
-        while (current != NULL)
-        {
-            int check = check_course(root_dir, current->value, carnet);
-            if (check == 0)
-            {
-                if (prev == NULL)
-                {
-                    asignatures->head = current->next;
-                    free(current);
-                    current = asignatures->head;
-                }
-                else
-                {
-                    prev->next = current->next;
-                    free(current);
-                    current = prev->next;
-                }
-                asignatures->length--;
-            }
-            else
-            {
-                prev = current;
-                current = current->next;
-            }
-        }
-        print_queue(asignatures);
-        printf("\033[94;1mTotal de asignaturas inscritas:\033[0m %d\n", asignatures->length);
-        */
-
-
         /* Imprimimos lo encotrado */
         printf("📚 Asignaturas preinscritas por el estudiante:\n");
         print_queue(asignatures);
@@ -324,14 +290,6 @@ int main(int argc, char const *argv[])
                 return EXIT_FAILURE;
             }
 
-            /*//////////////////////////////////////////////////////////////////////////*/
-            /*
-            printf("🎓 Estudiantes inscritos en la materia %s:\n", (char *)peek(asignatures));
-            print_queue(students);
-            printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
-            */
-            /*//////////////////////////////////////////////////////////////////////////*/
-
             /* Revisamos si el estudiante retiro la materia en correccion */
             if (search(students, carnet) == 0)
             {
@@ -343,10 +301,8 @@ int main(int argc, char const *argv[])
             }
             
             /* Calculamos la probabilidad de la materia */
-            course_p = student_prob_default(students, carnet, p_cohort, increase);
+            course_p = student_prob_default(students, carnet, p_cohort, increase, last_cohort);
             global_p += course_p;
-
-            printf("Para la materia %s hay una probabilidad de asistencia %.2f %% \n", course, course_p);
             
             /* Liberamos el string, el nodo de la cola de asignatura y el struct students*/
             free(course);
@@ -384,7 +340,7 @@ int main(int argc, char const *argv[])
         printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
 
         /* Calculamos la cantidad de carros esperados y si son suficientes*/
-        car_prob_default(students, course_code, p_cohort, increase);
+        car_prob_default(students, course_code, p_cohort, increase, last_cohort);
 
         /*liberamos la memoria del struct students*/
         free(students);

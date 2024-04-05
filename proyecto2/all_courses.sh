@@ -54,7 +54,6 @@ fi
 
 # Se recorren todos los codigos de las materias en all_courses.txt
 while read LINE; do
-    # TODO: Revisar la probabilidad de subir de cada materia
     # Se ejecuta el programa pidecola.out con el codigo de la materia y los argumentos dados
     # Un ejemplo de la linea a a buscar es: "Para la asignatura \033[1;94mCI2511\033[0m se esperan \033[1;92m1.92\033[0m carros."
     # Siendo el formato de la linea: "Para la asignatura \033[1;94mCODIGO\033[0m se esperan \033[1;92mX.XX\033[0m carros."
