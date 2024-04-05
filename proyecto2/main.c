@@ -355,6 +355,9 @@ int main(int argc, char const *argv[])
             
         }
 
+        /* La probabilidad maxima es de 100%*/
+        if(global_p > 100) global_p = 100;
+
         printf("Probabilidad total de asistencia: \033[92;1m%.2f%%\033[0m \n", global_p);
             
         
