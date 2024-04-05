@@ -123,15 +123,11 @@ void car_prob_default(Queue * students, char* asignature, float p, float q){
 
     num_estudiantes -= ceil(num_estudiantes * 0.25);
 
-    printf("Para la asignatura ");
-    for(i = 0; i < 6; i++){
-        printf("%c", asignature[i]);
-    }
-    printf(" se esperan %.2f carros. \n", cars);
+    printf("Para la asignatura \033[1;94m%s\033[0m se esperan \033[1;92m%.2f\033[0m carros. \n", asignature, cars);
 
     if((cars * 3) - num_estudiantes >= 0){
-        printf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes. \n");
+        printf("La cantidad de carros esperados es \033[1;92msuficiente\033[0m para la cantidad de estudiantes. \n");
     } else {
-        printf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes. \n");
+        printf("La cantidad de carros esperados es \033[1;91minsuficiente\033[0m para la cantidad de estudiantes. \n");
     }
 }

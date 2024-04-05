@@ -48,33 +48,32 @@ rm temp.txt
 echo -e "Cantidad de materias: \033[92;1m$(wc -l all_courses.txt | cut -d ' ' -f 1)\033[0m"
 
 # Se elimina el archivo de probabilidades si ya existe
-if [ -f probabilities.txt ]; then
-    rm probabilities.txt
+if [ -f cars.txt ]; then
+    rm cars.txt
 fi
 
 # Se recorren todos los codigos de las materias en all_courses.txt
 while read LINE; do
     # TODO: Revisar la probabilidad de subir de cada materia
     # Se ejecuta el programa pidecola.out con el codigo de la materia y los argumentos dados
-    # ./pidecola.out $LINE $@ | grep "Probabilidad de subir: " | cut -d ' ' -f 4 >> probabilities.txt
-    echo -e "Material: \033[92;1m$LINE\033[0m"
+    # Un ejemplo de la linea a a buscar es: "Para la asignatura \033[1;94mCI2511\033[0m se esperan \033[1;92m1.92\033[0m carros."
+    # Siendo el formato de la linea: "Para la asignatura \033[1;94mCODIGO\033[0m se esperan \033[1;92mX.XX\033[0m carros."
+    # Donde CODIGO es $LINE y X.XX la cantidad de carros esperados
+    ./pidecola.out $LINE $@ | grep -oP "Para la asignatura \033\[1;94m$LINE\033\[0m se esperan \033\[1;92m[0-9]+\.[0-9]+\033\[0m carros." | grep -oP "[0-9]+\.[0-9]+" >> cars.txt
 done < all_courses.txt
 
-# Se calcula la probabilidad promedio de subir
-AVERAGE_PROBABILITY=$(awk '{s+=$1} END {print s/NR}' probabilities.txt)
-echo -e "Probabilidad promedio de subir: \033[92;1m$AVERAGE_PROBABILITY\033[0m"
-# Se calcula la probabilidad maxima de subir
-MAX_PROBABILITY=$(sort -n probabilities.txt | tail -n 1)
-echo -e "Probabilidad maxima de subir: \033[92;1m$MAX_PROBABILITY\033[0m"
-# Se calcula la probabilidad minima de subir
-MIN_PROBABILITY=$(sort -n probabilities.txt | head -n 1)
-echo -e "Probabilidad minima de subir: \033[92;1m$MIN_PROBABILITY\033[0m"
-# Se calcula el porcentaje de materias que probablemente suban (75% >= probabilidad)
-# Se cuenta la cantidad de materias que tienen una probabilidad mayor o igual a 75
-PROBABLE_COURSES=$(awk '$1 >= 75' probabilities.txt | wc -l)
-# Se calcula el porcentaje de materias que probablemente suban
-PROBABLE_PERCENTAGE=$(echo "scale=2; $PROBABLE_COURSES / $(wc -l all_courses.txt | cut -d ' ' -f 1) * 100" | bc)
-echo -e "Porcentaje de materias que probablemente suban (75% o mas de probabilidad): \033[92;1m$PROBABLE_PERCENTAGE%\033[0m"
+sort -n cars.txt > temp.txt
+mv temp.txt cars.txt
+
+# Se calcula el promedio de carros esperados
+AVERAGE=$(awk '{s+=$1} END {print s/NR}' cars.txt)
+echo -e "Promedio de carros esperados: \033[92;1m$AVERAGE\033[0m"
+# Se calcula la cantidad maxima de carros esperados
+MAX=$(tail -n 1 cars.txt)
+echo -e "Maximo de carros esperados: \033[92;1m$MAX\033[0m"
+# Se calcula la cantidad minima de carros esperados
+MIN=$(head -n 1 cars.txt)
+echo -e "Minimo de carros esperados: \033[92;1m$MIN\033[0m"
 
 # Se elimina el archivo de materias y probabilidades
-rm all_courses.txt probabilities.txt
+rm all_courses.txt cars.txt
