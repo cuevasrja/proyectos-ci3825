@@ -52,7 +52,7 @@ float student_prob(Queue * students, char* carnet, float p, float q, int c){
         if(cohorte < 70 ) cohorte += 100;
 
         /*Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.*/
-        prob += p + ((c+100) - cohorte)*q;
+        prob += p + ((c+100)-cohorte)*q;
 
         /* Liberamos el string y el nodo*/
         free(peek(students));
