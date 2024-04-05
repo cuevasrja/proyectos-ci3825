@@ -325,15 +325,17 @@ int main(int argc, char const *argv[])
             }
 
             /*//////////////////////////////////////////////////////////////////////////*/
+            /*
             printf("🎓 Estudiantes inscritos en la materia %s:\n", (char *)peek(asignatures));
             print_queue(students);
             printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
+            */
             /*//////////////////////////////////////////////////////////////////////////*/
 
             /* Revisamos si el estudiante retiro la materia en correccion */
             if (search(students, carnet) == 0)
             {
-                printf("El estudiante retiro la materia: %s", course);
+                printf("El estudiante retiro la materia: \033[94;1m%s\033[0m\n", course);
                 /* Liberamos la memoria del string y del nodo*/
                 free(course);
                 dequeue(asignatures);
@@ -353,7 +355,7 @@ int main(int argc, char const *argv[])
             
         }
 
-        printf("Probabilidad total de asistencia: %.2f%% \n", global_p);
+        printf("Probabilidad total de asistencia: \033[92;1m%.2f%%\033[0m \n", global_p);
             
         
     }

@@ -52,22 +52,24 @@ fi
 
 # Se recorren todos los estudiantes en all_students.txt
 while read LINE; do
-    # TODO: Revisar la probabilidad de subir de cada estudiante
     # Se ejecuta el programa pidecola.out con el carnet del estudiante y los argumentos dados
-    # ./pidecola.out $LINE $@ | grep "Probabilidad de subir: " | cut -d ' ' -f 4 >> probabilities.txt
+    ./pidecola.out $LINE $@ | grep "Probabilidad total de asistencia: " | grep -o "[0-9]*\.[0-9]*" >> probabilities.txt
 done < all_students.txt
+
+cat probabilities.txt | sort -n > temp.txt
+mv temp.txt probabilities.txt
 
 # Se calcula la probabilidad promedio de subir
 AVERAGE_PROBABILITY=$(awk '{s+=$1} END {print s/NR}' probabilities.txt)
-echo -e "Probabilidad promedio de subir: \033[92;1m$AVERAGE_PROBABILITY\033[0m"
+echo -e "Probabilidad promedio de subir: \033[92;1m$AVERAGE_PROBABILITY%\033[0m"
 # Se calcula la probabilidad maxima de subir
-MAX_PROBABILITY=$(sort -n probabilities.txt | tail -n 1)
-echo -e "Probabilidad maxima de subir: \033[92;1m$MAX_PROBABILITY\033[0m"
+MAX_PROBABILITY=$(tail -n 1 probabilities.txt)
+echo -e "Probabilidad maxima de subir: \033[92;1m$MAX_PROBABILITY%\033[0m"
 # Se calcula la probabilidad minima de subir
-MIN_PROBABILITY=$(sort -n probabilities.txt | head -n 1)
-echo -e "Probabilidad minima de subir: \033[92;1m$MIN_PROBABILITY\033[0m"
+MIN_PROBABILITY=$(head -n 1 probabilities.txt)
+echo -e "Probabilidad minima de subir: \033[92;1m$MIN_PROBABILITY%\033[0m"
 # Se calcula el porcentaje de estudiantes que subiran (75% o mas de probabilidad)
-STUDENTS_UP75=$(awk '{if ($1 >= 0.75) print $1}' probabilities.txt | wc -l)
+STUDENTS_UP75=$(awk '{if ($1 >= 75) print $1}' probabilities.txt | wc -l)
 PERCENTAGE_UP75=$(echo "scale=2; $STUDENTS_UP75 / $(wc -l all_students.txt | cut -d ' ' -f 1) * 100" | bc)
 echo -e "Porcentaje de estudiantes que subiran (75% o mas de probabilidad): \033[92;1m$PERCENTAGE_UP75%\033[0m"
 
