@@ -13,7 +13,7 @@ estudiante pueda conseguir cola con alguno de sus compañeros.
 @param c: ultima cohorte de la que se tiene información.
 @return: probabilidad porcentual de que el estudiante pueda conseguir cola.
 */
-float student_prob_default(Queue * students, char* carnet, float p, float q, int c);
+float student_prob(Queue * students, char* carnet, float p, float q, int c);
 
 /*
 Funcion que toma los estudiantes de una sección y calcula la cantidad de carros esperados 
@@ -24,6 +24,6 @@ para la materia y si esta es suficiente para que todos puedan subir.
 @param q: incremento de la proporción de carro-habientes de una cohorte a la anterior. 
 @param c: ultima cohorte de la que se tiene información.
 */
-void car_prob_default(Queue * students, char* asignature, float p, float q, int c);
+void car_prob(Queue * students, char* asignature, float p, float q, int c);
 
 #endif

@@ -25,7 +25,7 @@
     dado su carnet y una cola con los carnets de los estudiantes inscritos a 
     la materia
 */
-float student_prob_default(Queue * students, char* carnet, float p, float q, int c){
+float student_prob(Queue * students, char* carnet, float p, float q, int c){
 
     /*
     Inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
@@ -52,7 +52,7 @@ float student_prob_default(Queue * students, char* carnet, float p, float q, int
         if(cohorte < 70 ) cohorte += 100;
 
         /*Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.*/
-        prob += p + (121-cohorte)*q;
+        prob += p + ((c+100) - cohorte)*q;
 
         /* Liberamos el string y el nodo*/
         free(peek(students));
@@ -89,7 +89,7 @@ float student_prob_default(Queue * students, char* carnet, float p, float q, int
     una cohorte a la anterior
 
 */
-void car_prob_default(Queue * students, char* asignature, float p, float q, int c){
+void car_prob(Queue * students, char* asignature, float p, float q, int c){
 
     char line[10];
 

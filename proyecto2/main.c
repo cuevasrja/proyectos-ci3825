@@ -305,7 +305,7 @@ int main(int argc, char const *argv[])
             }
             
             /* Calculamos la probabilidad de la materia */
-            course_p = student_prob_default(students, carnet, p_cohort, increase, last_cohort);
+            course_p = student_prob(students, carnet, p_cohort, increase, last_cohort);
             global_p += course_p;
             
             /* Liberamos el string, el nodo de la cola de asignatura y el struct students*/
@@ -348,7 +348,7 @@ int main(int argc, char const *argv[])
         printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
 
         /* Calculamos la cantidad de carros esperados y si son suficientes*/
-        car_prob_default(students, course_code, p_cohort, increase, last_cohort);
+        car_prob(students, course_code, p_cohort, increase, last_cohort);
 
         /*liberamos la memoria del struct students*/
         free(students);
