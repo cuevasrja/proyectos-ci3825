@@ -20,9 +20,6 @@
 
 # include "queue.h"
 
-# define TRUE (1 == 1)
-# define FALSE (0 == 1)
-
 Queue * new_queue(){
 
     Queue * new_queue = (Queue*)malloc(sizeof(Queue));
