@@ -3,9 +3,27 @@
 # Script que lee todos los carnets de los estudiantes y realiza la busqueda de probabilidad de subir de cada uno
 # de los estudiantes
 
+# Si solo hay un parametro y es -h o --help, se imprime la ayuda
+if [ $# -eq 1 ] && ([ "$1" == "-h" ] || [ "$1" == "--help" ]); then
+    echo -e "\033[1;93mUso:\033[0m ./all_students.sh [Opciones]"
+    echo -e "\033[1;93mOpciones:\033[0m"
+    echo -e "\033[93m  -h, --help:\033[0m Muestra la ayuda"
+    echo -e "\033[93m  -d <path>:\033[0m Directorio raiz de los comprobantes"
+    echo -e "\033[93m  -c, --cohorte <cohorte>:\033[0m Ultima cohorte de la que se tiene informacion"
+    echo -e "\033[93m  -p, --pcohorte <probabilidad>:\033[0m Probabilidad de tener carro de la ultima cohorte"
+    echo -e "\033[93m  -i, --incremento <incremento>:\033[0m Incremento de la probabilidad de tener carro por cohorte"
+    exit 0
+fi
+
+# Se revisa si el ejecutable pidecola.out existe. En caso de no existir, se imprime un mensaje de error
+if [ ! -f pidecola.out ]; then
+    echo "\033[91;1mError:\033[0m No se encontro el ejecutable pidecola.out"
+    exit 1
+fi
+
 # Se revisa que la cantidad de argumentos es par o igual a 0 y menor o igual a 6. En caso de no serlo, se imprime un mensaje de error
 if [ $(( $# % 2 )) -ne 0 ] || [ $# -gt 6 ]; then
-    echo "\033[91;1mError:\033[0m Cantidad de argumentos invalida"
+    echo -e "\033[91;1mError:\033[0m Cantidad de argumentos invalida"
     exit 1
 fi
 
