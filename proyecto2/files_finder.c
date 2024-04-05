@@ -291,3 +291,121 @@ Queue * find_students(char* root_name, char* course_code){
     return students;
 
 }
+
+/*
+Chequea que un estudiante este en un curso
+*/
+int check_course(char* root_name, char* course_code, char* carnet){
+    char sede_path[ strlen(root_name) + 20 ];
+    char list_path[ strlen(root_name) + 30 ];
+    char apt_path[ strlen(root_name)  + 35 ];
+    char course_path[ strlen(root_name) + 60 ];
+
+    DIR * root_dir, *sede_dir, *list_dir, *apt_dir;
+    struct dirent *ent_root_dir, * ent_sede_dir, *ent_list_dir, *ent_apt_dir;
+
+    if ((root_dir = opendir(root_name)) == NULL )
+    {
+        printf("No se pudo abrir el directorio: %s \n", root_name);
+        return;
+    }
+
+    while ((ent_root_dir = readdir(root_dir)) != NULL)
+    {
+        if(strcmp(ent_root_dir->d_name, ".") == 0 || strcmp(ent_root_dir->d_name, "..") == 0){
+            continue;
+        }
+        
+        strcpy(sede_path, root_name);
+        strcat(sede_path, "/");
+        strcat(sede_path, ent_root_dir->d_name);
+
+        if ((sede_dir = opendir(sede_path)) == NULL)
+        {
+            printf("No se pudo abrir el directorio: %s \n", sede_path);
+            return;
+        }
+
+        while ((ent_sede_dir = readdir(sede_dir)) != NULL)
+        {
+            if (strcmp(ent_sede_dir->d_name, "listas") != 0)
+            {
+                continue;
+            }
+
+            strcpy(list_path, sede_path);
+            strcat(list_path, "/");
+            strcat(list_path, ent_sede_dir->d_name);
+
+            if ((list_dir = opendir(list_path)) == NULL)
+            {
+                printf("No se pudo abrir el directorio: %s \n", list_path);
+                return;
+            }
+
+            while ((ent_list_dir = readdir(list_dir)) != NULL)
+            {
+                if(strncmp(ent_list_dir->d_name, course_code, 2) != 0){
+                    continue;
+                }
+
+                strcpy(apt_path, list_path);
+                strcat(apt_path, "/");
+                strcat(apt_path, ent_list_dir->d_name);
+
+                if ((apt_dir = opendir(apt_path)) == NULL)
+                {
+                    printf("No se pudo abrir el directorio: %s \n", apt_path);
+                    return;
+                }
+
+                while ((ent_apt_dir = readdir(apt_dir)) != NULL)
+                {
+
+                    if(strncmp(ent_apt_dir->d_name, course_code, 6) != 0){
+                        continue;
+                    }
+
+                    /* Esto debe ir en otra funcion */
+                    FILE *course_file;
+
+                    strcpy(course_path, apt_path);
+                    strcat(course_path, "/");
+                    strcat(course_path, ent_apt_dir->d_name);
+
+                    course_file = fopen(course_path, "r");
+                    if (course_file == NULL) {
+                        perror("No se pudo abrir el archivo");
+                        return;
+                    }
+                    char* line = NULL;
+                    int j = 0;
+                    size_t len = 0;
+                    while (getline(&line, &len, course_file) != -1) {
+                        if (j == 0){
+                            j++;
+                            continue;
+                        }
+                        char* token = strtok(line, "\n");
+                        if (token != NULL){
+                            if (strcmp(token, carnet) == 0){
+                                return 1;
+                            }
+                        }
+                    }
+                    fclose(course_file);
+                    free(line);
+                }
+                     
+                closedir(apt_dir);
+            }
+
+            closedir(list_dir);
+        }    
+
+        closedir(sede_dir);
+    }
+    
+    closedir(root_dir);
+    return 0;
+}

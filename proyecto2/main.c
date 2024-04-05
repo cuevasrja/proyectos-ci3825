@@ -257,9 +257,36 @@ int main(int argc, char const *argv[])
             printf("\033[91;1mError:\033[0m No se encontraron asignaturas para el carnet %s\n", carnet);
             return EXIT_FAILURE;
         }
-        printf("📚 Asignaturas preinscritas por el estudiante:\n");
+        printf("📚 Asignaturas inscritas por el estudiante:\n");
+        Node* current = asignatures->head;
+        Node* prev = NULL;
+        while (current != NULL)
+        {
+            int check = check_course(root_dir, current->value, carnet);
+            if (check == 0)
+            {
+                if (prev == NULL)
+                {
+                    asignatures->head = current->next;
+                    free(current);
+                    current = asignatures->head;
+                }
+                else
+                {
+                    prev->next = current->next;
+                    free(current);
+                    current = prev->next;
+                }
+                asignatures->length--;
+            }
+            else
+            {
+                prev = current;
+                current = current->next;
+            }
+        }
         print_queue(asignatures);
-        printf("\033[94;1mTotal de asignaturas preinscritas:\033[0m %d\n", asignatures->length);
+        printf("\033[94;1mTotal de asignaturas inscritas:\033[0m %d\n", asignatures->length);
     }
     else if ( r == 1)
     {
