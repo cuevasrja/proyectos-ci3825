@@ -259,6 +259,10 @@ int main(int argc, char const *argv[])
             printf("\033[91;1mError:\033[0m Hubo un error al encontrar el comprobante del estudiante con carnet: %s\n", carnet);
             return EXIT_FAILURE;
         }
+        if (asignatures->length == 0){
+            printf("\033[91;1mError:\033[0m El estudiante no inscribio el trimestre\n");
+            return EXIT_FAILURE;
+        }
 
         /* Imprimimos lo encotrado */
         printf("📚 Asignaturas preinscritas por el estudiante:\n");
@@ -331,6 +335,10 @@ int main(int argc, char const *argv[])
         if (students == NULL)
         {
             printf("\033[91;1mError:\033[0m Hubo un error al buscar la lista de la materia %s\n", course_code);
+            return EXIT_FAILURE;
+        }
+        if (students->length == 0){
+            printf("\033[91;1mError:\033[0m No hay una sección abierta de la materia %s\n", course_code);
             return EXIT_FAILURE;
         }
 
