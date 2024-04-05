@@ -20,6 +20,9 @@
 
 # include "queue.h"
 
+# define TRUE (1 == 1)
+# define FALSE (0 == 1)
+
 Queue * new_queue(){
 
     Queue * new_queue = (Queue*)malloc(sizeof(Queue));
@@ -95,11 +98,11 @@ int search(Queue * queue, char * x){
     {
         if (strcmp((char *)act_node->value, x) == 0)
         {
-            return 1;
+            return TRUE;
         }
         act_node = act_node->next;
     }
-    return 0;
+    return FALSE;
 
 }
 

@@ -295,7 +295,7 @@ int main(int argc, char const *argv[])
             }
 
             /* Revisamos si el estudiante retiro la materia en correccion */
-            if (search(students, carnet) == 0)
+            if (!search(students, carnet))
             {
                 printf("El estudiante retiro la materia: \033[94;1m%s\033[0m\n", course);
                 /* Liberamos la memoria del string y del nodo*/
