@@ -1,3 +1,19 @@
+/*  Proyecto 2. Pide Cola
+    Participantes:
+        Sandibel Soares
+        Carlo Herrera
+        Juan Cuevas
+
+    Archivo: queue.c 
+    Contiene las funciones para:
+        - crear una nueva cola 
+        - encolar un nodo
+        - acceder al valor del nodo de la cabeza
+        - descencolar la cabeza.
+        - liberar los nodos de forma recursiva.
+        - imprimir los elementos de la cola
+*/
+
 # include <stdio.h>
 # include <stdlib.h>
 # include "queue.h"

@@ -6,9 +6,11 @@
 
 int student_prob(Queue * students, char* carnet){
 
-    //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
-    //en el bus de la universidad y el 10% de llegar por transporte publico
-    int prob = 25;
+    /*
+    inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
+    en el bus de la universidad y el 10% de llegar por transporte publico
+    */
+    float prob = 25.0;
     int cohorte;
 
     char *line[7];
@@ -22,9 +24,13 @@ int student_prob(Queue * students, char* carnet){
         //Extraemos la cohorte como entero
         cohorte = (line[0] - "0") * 10 + (line[1] - "0");
         
-        //Si es una cohorte posterior al 2000 sumamos 100 para mantener
-        //la distancia entre dos cohortes.
-        if(cohorte < 70 ) cohorte += 100;
+        /*
+        Si es una cohorte posterior al 2000 sumamos 100 para mantener
+        la distancia entre dos cohortes.
+        */
+        if(cohorte < 70 ){
+            cohorte += 100;
+        }
 
         //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
         prob += 3 + (121-cohorte)*4;
@@ -159,8 +165,10 @@ void car_prob(Queue * students, char* asignature, float p, float q){
         //Extraemos la cohorte como entero
         cohorte = (line[0] - '0') * 10 + (line[1] - '0');
         
-        //Si es una cohorte posterior al 2000 sumamos 100 para mantener
-        //la distancia entre dos cohortes.
+        /*
+        Si es una cohorte posterior al 2000 sumamos 100 para mantener
+        la distancia entre dos cohortes.
+        */
         if(cohorte < 70 ) cohorte += 100;
 
         //Sumamos la probabilidad del estudiante de tener carro segun su cohorte al acumulado.
@@ -171,15 +179,15 @@ void car_prob(Queue * students, char* asignature, float p, float q){
 
     num_estudiantes -= ceil(num_estudiantes * 0.25);
 
-    fprintf("Para la asignatura ");
+    printf("Para la asignatura ");
     for(i = 0; i < 6; i++){
         fprintf("%c", asignature[i]);
     }
-    fprintf(" se esperan %.2f carros. \n", cars);
+    printf(" se esperan %.2f carros. \n", cars);
 
     if((cars * 3) - num_estudiantes >= 0){
-        fprintf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes. \n");
+        printf("La cantidad de carros esperados es suficiente para la cantidad de estudiantes. \n");
     } else {
-        fprintf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes. \n");
+        printf("La cantidad de carros esperados es insuficiente para la cantidad de estudiantes. \n");
     }
 }
