@@ -16,6 +16,8 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
+
 # include "queue.h"
 
 Queue * new_queue(){
@@ -84,6 +86,21 @@ void free_nodes(struct Node * node)
         free_nodes(node->next);
         
     free(node);
+}
+
+int search(Queue * queue, char * x){
+
+    Node * act_node = queue->head;
+    while (act_node != NULL)
+    {
+        if (strcmp((char *)act_node->value, x) == 0)
+        {
+            return 1;
+        }
+        act_node = act_node->next;
+    }
+    return 0;
+
 }
 
 void print_queue(Queue * queue)

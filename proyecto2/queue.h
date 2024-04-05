@@ -48,6 +48,13 @@ Función que libera la memoria de los nodos de la cola
 void free_nodes( Node * node);
 
 /*
+Función que busca un elemento en especifico de la cola
+@param queue Cola en la que se va a buscar el elemento
+@param  x el elemento a buscar
+*/
+int search(Queue * queue, char * x);
+
+/*
 Función que imprime los elementos de la cola
 @param queue Cola que se va a imprimir
 */
