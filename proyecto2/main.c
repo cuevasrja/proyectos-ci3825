@@ -189,7 +189,7 @@ void print_welcome(){
     printf("💻 \033[93;1mDesarrollado por:\033[0m\n");
     printf("  \033[93;1m-\033[0m Sandibel Soares\n");
     printf("  \033[93;1m-\033[0m Carlo Herrera\n");
-    printf("  \033[93;1m-\033[0m Juan Cuevas\n");
+    printf("  \033[93;1m-\033[0m Juan Cuevas\n\n");
 }
 
 /* Funcion que imprime la despedida al finalizar el programa */
@@ -247,16 +247,20 @@ int main(int argc, char const *argv[])
 
     if (r == 0)
     {
-        /* Si r == 0, llamamos el codigo que calcula la proba por carnet*/
+        /* Si r == 0, significa que hay una consulta por carnet*/
 
         printf("🧮 Vamos a calcular la probabilidad de que el estudiante \033[92;1m%s\033[0m pueda subir a la universidad en cola 🧮\n", carnet);
         
+        /* Buscamos las asignaturas qu el estudiante pre-inscribio*/
         Queue * asignatures = find_asignatures(root_dir, carnet);
+        /*Nos aseguramos que find_asignatures nos devolvio una cola */
         if (asignatures == NULL)
         {
-            printf("\033[91;1mError:\033[0m No se encontraron asignaturas para el carnet %s\n", carnet);
+            printf("\033[91;1mError:\033[0m Hubo un error al encontrar el comprobante del estudiante con carnet: %s\n", carnet);
             return EXIT_FAILURE;
         }
+
+        /*
         printf("📚 Asignaturas inscritas por el estudiante:\n");
         Node* current = asignatures->head;
         Node* prev = NULL;
@@ -287,23 +291,101 @@ int main(int argc, char const *argv[])
         }
         print_queue(asignatures);
         printf("\033[94;1mTotal de asignaturas inscritas:\033[0m %d\n", asignatures->length);
+        */
+
+
+        /* Imprimimos lo encotrado */
+        printf("📚 Asignaturas preinscritas por el estudiante:\n");
+        print_queue(asignatures);
+        printf("\033[94;1mTotal de asignaturas preinscritas:\033[0m %d\n", asignatures->length);
+
+        /* Variable que usaremos para acceder a la lista de estudiantes de cada material*/
+        Queue * students;
+        /* La probabilidad global de que el estudiante pueda asistir a sus materias */
+        float global_p = 0.0;
+        /* Probabilidad de la materia que se este analizando */
+        float course_p = 0.0;
+        /* Codigo del curso que se analiza */
+        char * course;
+
+        /* Comenzamos a analizar los cursos que estan en la cola provista por find_asignatures*/
+        while ( asignatures->head != NULL)
+        {
+            /* Accedemos al nombre de la materia */
+            course = (char *)peek(asignatures);
+
+            /* Buscamos los estudiantes de la materia */
+            students = find_students(root_dir, course);
+            
+            /* Chequeamos que no se haya producido un error al usar la funcion find_students */
+            if (students == NULL)
+            {
+                printf("\033[91;1mError:\033[0m Se produjo un error al buscar la lista de %s\n", course);
+                return EXIT_FAILURE;
+            }
+
+            /*//////////////////////////////////////////////////////////////////////////*/
+            printf("🎓 Estudiantes inscritos en la materia %s:\n", (char *)peek(asignatures));
+            print_queue(students);
+            printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
+            /*//////////////////////////////////////////////////////////////////////////*/
+
+            /* Revisamos si el estudiante retiro la materia en correccion */
+            if (search(students, carnet) == 0)
+            {
+                printf("El estudiante retiro la materia: %s", course);
+                /* Liberamos la memoria del string y del nodo*/
+                free(course);
+                dequeue(asignatures);
+                continue;
+            }
+            
+            /* Calculamos la probabilidad de la materia */
+            course_p = student_prob_default(students, carnet, p_cohort, increase);
+            global_p += course_p;
+
+            printf("Para la materia %s hay una probabilidad de asistencia %.2f %% \n", course, course_p);
+            
+            /* Liberamos el string, el nodo de la cola de asignatura y el struct students*/
+            free(course);
+            dequeue(asignatures);
+            free(students);
+            
+        }
+
+        printf("Probabilidad total de asistencia: %.2f%% \n", global_p);
+            
+        
     }
     else if ( r == 1)
     {
-        /* Si r == 1, llamamos e\l codigo que calcula la cantidad de carros por materia */
+        /* Si r == 1, significa que es una consulta por codigo de materia*/
 
         printf("🧮 Vamos a calcular la cantidad promedio de carros para la materia \033[92;1m%s\033[0m y si son suficientes para que todos los estudiantes puedan subir 🧮\n", course_code);
+
+        /* Buscamos la lista de carnets de los estudiantes inscritos en la materia */
         Queue * students = find_students(root_dir, course_code);
+
+        /* Revisamos que no se haya producido ningun error en la funcion find_students*/
         if (students == NULL)
         {
-            printf("\033[91;1mError:\033[0m No se encontraron estudiantes para la materia %s\n", course_code);
+            printf("\033[91;1mError:\033[0m Hubo un error al buscar la lista de la materia %s\n", course_code);
             return EXIT_FAILURE;
         }
+
+        /*Imprimimos la lista de estudiantes encontrada*/
         printf("🎓 Estudiantes inscritos en la materia:\n");
         print_queue(students);
         printf("\033[94;1mTotal de estudiantes inscritos:\033[0m %d\n", students->length);
+
+        /* Calculamos la cantidad de carros esperados y si son suficientes*/
+        car_prob_default(students, course_code, p_cohort, increase);
+
+        /*liberamos la memoria del struct students*/
+        free(students);
     }
     
     print_goodbye();
+    
     return EXIT_SUCCESS;
 }
