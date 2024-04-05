@@ -4,7 +4,7 @@
 
 # include "calc_prob.h"
 
-int student_prob(Queue * students, char* carnet){
+float student_prob(Queue * students, char* carnet){
 
     /*
     inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
@@ -55,7 +55,7 @@ int student_prob(Queue * students, char* carnet){
     return prob;
 }
 
-int student_prob(Queue * students, char* carnet, float p, float q){
+float student_prob(Queue * students, char* carnet, float p, float q){
 
     //inicializamos la probabilidad acumulada en 25 contando el 15% de llegar 
     //en el bus de la universidad y el 10% de llegar por transporte publico

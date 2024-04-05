@@ -11,7 +11,7 @@ y el factor de incremento por defecto.
 @param carnet: carnet del estudiante por el que se consulta.
 @return: probabilidad porcentual de que el estudiante pueda conseguir cola.
 */
-int student_prob(Queue * students, char* carnet);
+float student_prob(Queue * students, char* carnet);
 
 /*
 Funcion que toma los estudiantes de una sección y calcula la probabilidad de que un 
@@ -22,7 +22,7 @@ estudiante pueda conseguir cola con alguno de sus compañeros.
 @param q: incremento de la proporción de carro-habientes de una cohorte a la anterior. 
 @return: probabilidad porcentual de que el estudiante pueda conseguir cola.
 */
-int student_prob(Queue * students, char* carnet, float p, float q);
+float student_prob(Queue * students, char* carnet, float p, float q);
 
 /*
 Funcion que toma los estudiantes de una sección y calcula la cantidad de carros esperados 
